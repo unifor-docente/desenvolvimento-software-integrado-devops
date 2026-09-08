@@ -1,15 +1,3 @@
-<!--
-NOTA PARA O PROFESSOR (não faz parte do exemplo — pode apagar esta caixa antes de projetar):
-
-Cenário fictício, criado só para calibrar o nível de detalhe esperado. Não é baseado em
-nenhuma empresa real. Sugestão de uso em sala: deixe os grupos tentarem sozinhos primeiro
-(passos 1-3 da Atividade 1) e só mostre este exemplo no fechamento, como comparação — se
-mostrar antes, os grupos tendem a copiar a estrutura em vez de pensar no próprio fluxo
-(efeito de ancoragem). Bom também para mostrar o que NÃO conta como gargalo específico o
-suficiente: "sistema lento" é vago; "deploy manual via FTP direto em produção, sem revisão"
-é um gargalo de verdade porque já aponta pra uma causa e uma automação possível.
--->
-
 # Diagnóstico DevOps
 
 **Projeto/grupo:** Exemplo ilustrativo — Relatório de Vendas Interno (cenário fictício, só para referência)
