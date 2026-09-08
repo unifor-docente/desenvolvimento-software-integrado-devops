@@ -12,13 +12,15 @@
 
 ## Gargalos
 
-- **Gargalo 1 — Deploy manual sem pipeline nem revisão.** Qualquer erro de digitação vira incidente em produção sem ninguém perceber antes.
-- **Gargalo 2 — Nenhum teste automatizado.** Bugs só aparecem depois que o cliente já viu, nunca antes do deploy.
-- **Gargalo 3 — Nenhuma rastreabilidade.** Ninguém sabe o que mudou entre uma versão e outra, nem quem fez o quê.
+- **Gargalo 1 — Deploy manual sem pipeline nem revisão.** Qualquer erro de digitação vira incidente em produção sem ninguém perceber antes. *(Categoria: **processo** — não existe uma etapa formal de revisão/aprovação antes do deploy.)*
+- **Gargalo 2 — Nenhum teste automatizado.** Bugs só aparecem depois que o cliente já viu, nunca antes do deploy. *(Categoria: **ferramenta/dado** — falta uma ferramenta de CI que rode testes automaticamente.)*
+- **Gargalo 3 — Nenhuma rastreabilidade.** Ninguém sabe o que mudou entre uma versão e outra, nem quem fez o quê. *(Categoria: **cultura** — ninguém se sente dono de registrar as mudanças; não é falta de ferramenta, é falta de hábito compartilhado.)*
 
 # Priorização
 
 **Melhoria escolhida:** Implementar um pipeline de CI simples que roda testes automatizados a cada push e bloqueia o deploy se algo quebrar, junto com um fluxo mínimo de Pull Request antes de qualquer alteração ir para produção.
+
+**Categoria da melhoria:** Ferramenta/dado, com reforço de processo — a automação exige também o hábito de abrir Pull Request antes de qualquer mudança.
 
 **Impacto esperado:** Sair de "descobrimos o bug quando o cliente reclama" para "descobrimos o bug antes mesmo de fazer o deploy".
 

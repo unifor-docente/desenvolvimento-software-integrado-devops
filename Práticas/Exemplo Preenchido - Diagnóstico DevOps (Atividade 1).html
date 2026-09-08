@@ -80,6 +80,17 @@
     font-size: 0.92rem;
   }
   .link-box strong { color: var(--blue); }
+  .tag {
+    display: inline-block;
+    font-size: 0.78rem;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 10px;
+    margin-right: 4px;
+  }
+  .tag-cultura { background: #E6F4EA; color: #1E7A34; }
+  .tag-processo { background: #E8EEF7; color: var(--blue); }
+  .tag-ferramenta { background: #FBEAE5; color: #B03A2E; }
   footer {
     margin-top: 40px;
     font-size: 0.8rem;
@@ -120,17 +131,27 @@
 <h3>Gargalos</h3>
 <ul>
   <li><strong>Gargalo 1 — Deploy manual sem pipeline nem revisão.</strong> Qualquer erro de
-    digitação vira incidente em produção sem ninguém perceber antes.</li>
+    digitação vira incidente em produção sem ninguém perceber antes.
+    <span class="tag tag-processo">Categoria: processo</span> — não existe uma etapa formal de
+    revisão/aprovação antes do deploy.</li>
   <li><strong>Gargalo 2 — Nenhum teste automatizado.</strong> Bugs só aparecem depois que o
-    cliente já viu, nunca antes do deploy.</li>
+    cliente já viu, nunca antes do deploy.
+    <span class="tag tag-ferramenta">Categoria: ferramenta/dado</span> — falta uma ferramenta de
+    CI que rode testes automaticamente.</li>
   <li><strong>Gargalo 3 — Nenhuma rastreabilidade.</strong> Ninguém sabe o que mudou entre uma
-    versão e outra, nem quem fez o quê.</li>
+    versão e outra, nem quem fez o quê.
+    <span class="tag tag-cultura">Categoria: cultura</span> — ninguém se sente dono de registrar
+    as mudanças; não é falta de ferramenta, é falta de hábito compartilhado.</li>
 </ul>
 
 <h2>Priorização</h2>
 <p class="field"><span class="label">Melhoria escolhida:</span> Implementar um pipeline de CI
   simples que roda testes automatizados a cada push e bloqueia o deploy se algo quebrar, junto
   com um fluxo mínimo de Pull Request antes de qualquer alteração ir para produção.</p>
+<p class="field"><span class="label">Categoria da melhoria:</span>
+  <span class="tag tag-ferramenta">ferramenta/dado</span>
+  <span class="tag tag-processo">processo</span>
+  — a automação exige também o hábito de abrir Pull Request antes de qualquer mudança.</p>
 <p class="field"><span class="label">Impacto esperado:</span> Sair de "descobrimos o bug quando
   o cliente reclama" para "descobrimos o bug antes mesmo de fazer o deploy".</p>
 <p class="field"><span class="label">Evidência de sucesso:</span> Pipeline rodando no
