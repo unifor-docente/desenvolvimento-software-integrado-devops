@@ -1,335 +1,551 @@
 # Prática — revisão de código com IA usando CodeRabbit
 
-**Encontro 2 · GitHub Flow, pull requests e qualidade · 45–60 minutos**, com as ferramentas instaladas previamente.
+**Encontro 2 · GitHub Flow, pull requests, testes e revisão humana.**
 
-Você vai executar uma API de orçamento, propor um desconto em um pull request (PR), analisar a revisão da IA e comprovar a correção com testes. Ao final, a equipe terá um PR com comentários, testes de regressão e uma decisão de revisão humana.
+**Duração estimada:** 60–90 minutos, com ferramentas e autorização preparadas. **Organização:** uma execução por equipe, alternando quem implementa e quem revisa.
+
+Você vai criar um fork de uma API de orçamento, abrir um pull request com um defeito proposital, analisar a revisão do CodeRabbit, reproduzir o erro com testes e enviar a correção ao mesmo PR. Todas as operações de Git, GitHub, testes e API deste roteiro são feitas pelo terminal.
 
 > Toda saída de IA é hipótese até ser validada por teste, execução ou revisão humana.
 
-## 1. Organização e pré-requisitos
+## O que deve existir ao final
 
-- Uma conta GitHub por integrante e uma conta com permissão para instalar o CodeRabbit no repositório da equipe.
-- Git, Node.js **24 ou superior** e npm instalados; editor de código e navegador.
-- Acesso à internet para GitHub e CodeRabbit.
-- Um fork por equipe. Um integrante conduz os comandos e outro revisa; todos participam da análise.
+- Um fork da equipe com uma branch de trabalho e um PR próprio.
+- Uma revisão real do CodeRabbit e a análise crítica de pelo menos um apontamento.
+- Um commit com testes que reproduzem os defeitos e outro com a correção.
+- Evidências de testes falhando antes e passando depois, incluindo validação HTTP.
+- Uma conclusão humana registrada no PR.
 
-Confirme no terminal:
+A aplicação está em [unifor-docente/devops-coderabbit-demo](https://github.com/unifor-docente/devops-coderabbit-demo). O [PR nº 1 do professor](https://github.com/unifor-docente/devops-coderabbit-demo/pull/1) é referência de demonstração; a equipe trabalha no próprio fork e seu PR pode ter outro número. Este exemplo não substitui a escolha livre da aplicação do projeto integrador.
+
+## 1. Preparar o ambiente e o acesso
+
+São necessários Git, **Node.js 24 ou superior**, npm, GitHub CLI (`gh`), curl, editor de código e internet. Os comandos usam **Bash ou Zsh**. No Windows, utilize WSL com essas ferramentas instaladas. Mantenha a mesma sessão de terminal: as variáveis definidas serão reutilizadas.
 
 ```sh
+git --version
 node --version
 npm --version
-git --version
+gh --version
+curl --version
 ```
 
-Se o Git solicitar identificação ao fazer commit, configure seu nome e e-mail no clone com `git config user.name "Seu Nome"` e `git config user.email "seu-email"`. Para enviar commits, use a autenticação GitHub já configurada na máquina; quem utiliza GitHub CLI pode executar `gh auth login`. Não coloque senhas ou tokens nos arquivos.
+Se faltar alguma ferramenta, instale-a antes de continuar. Referências: [Node.js](https://nodejs.org/en/download) e [GitHub CLI](https://cli.github.com/).
 
-**Links da atividade:**
-
-- [Repositório da aplicação](https://github.com/unifor-docente/devops-coderabbit-demo)
-- [PR nº 1 do professor — demonstração](https://github.com/unifor-docente/devops-coderabbit-demo/pull/1)
-- [CodeRabbit](https://app.coderabbit.ai/)
-
-O PR do professor serve para acompanhar a demonstração. A equipe deve criar seu próprio PR no próprio fork; seu número pode ser diferente de 1. A instalação do CodeRabbit no repositório do professor não é transferida para o fork.
-
-## 2. Criar e clonar o fork da equipe
-
-1. Abra o repositório da aplicação e clique em **Fork**.
-2. Escolha a conta de um integrante ou a organização da equipe como proprietária.
-3. Mantenha o nome `devops-coderabbit-demo` e marque **Copy the main branch only**, se a opção aparecer.
-4. Clique em **Create fork**.
-5. No fork, abra **Code → HTTPS** e copie a URL. Use essa URL no comando abaixo, substituindo `SEU-USUARIO-OU-ORGANIZACAO`.
+Autentique o GitHub CLI e configure o Git para usar suas credenciais:
 
 ```sh
-git clone https://github.com/SEU-USUARIO-OU-ORGANIZACAO/devops-coderabbit-demo.git
+gh auth login
+gh auth status
+gh auth setup-git
+```
+
+No login, escolha GitHub.com e HTTPS. O fluxo de autenticação pode exigir confirmação no navegador. Essa confirmação e a autorização inicial do aplicativo CodeRabbit são pré-requisitos de acesso, não operações de edição de código.
+
+**CodeRabbit:** o proprietário da conta/organização deve autorizar previamente o GitHub App para o fork da equipe assim que ele for criado na próxima etapa. Faça isso com apoio do professor antes da revisão. A instalação do professor não se transfere para forks. Consulte a [documentação de autorização](https://docs.coderabbit.ai/platforms/github-com). O roteiro não instala o aplicativo por um comando nem exige chave de API no workflow.
+
+## 2. Criar o fork e definir o repositório de destino
+
+Um integrante será o proprietário do fork. Na conta desse integrante, execute em uma pasta de projetos, fora de outro clone:
+
+```sh
+DONO=$(gh api user --jq .login)
+REPO="$DONO/devops-coderabbit-demo"
+BRANCH="pratica/coderabbit-desconto"
+
+gh repo fork unifor-docente/devops-coderabbit-demo \
+  --default-branch-only --clone=false
+
+gh repo clone "$REPO"
 cd devops-coderabbit-demo
-git remote -v
+gh repo set-default "$REPO"
 git switch main
+git remote -v
+gh repo view "$REPO" --json nameWithOwner,url
 ```
 
-Confira que `origin` aponta para a conta da equipe. Os próximos commits serão enviados para ela. Se outros integrantes forem enviar alterações, o proprietário deve conceder acesso nas configurações do repositório.
+**Confira:** `origin` e `nameWithOwner` devem apontar para a conta da equipe, não para `unifor-docente`. Os comandos GitHub deste roteiro também usam `--repo "$REPO"` para explicitar o destino.
 
-Abra a aba **Actions** do fork. Se o GitHub apresentar a opção de habilitar workflows, habilite-os para executar os testes da atividade. Consulte a [orientação oficial sobre forks](https://docs.github.com/en/pull-requests/how-tos/work-with-forks/fork-a-repo) se precisar de ajuda.
+Se a equipe usa uma organização, defina `DONO="NOME-DA-ORGANIZACAO"` e `REPO="$DONO/devops-coderabbit-demo"` e crie o fork com `gh repo fork unifor-docente/devops-coderabbit-demo --org "$DONO" --default-branch-only --clone=false`. Depois siga a clonagem acima. Use apenas uma das alternativas.
 
-## 3. Executar a versão inicial
+Se o fork ou a pasta já existir, confira seu conteúdo antes de continuar; não apague trabalho anterior nem repita a criação de branch sobre uma execução já corrigida.
 
-Na raiz do clone da API:
+Configure a autoria local dos commits, substituindo os exemplos:
 
 ```sh
-cd app
-npm test
-npm start
+git config user.name "Nome do integrante"
+git config user.email "email-associado-ao-github"
 ```
 
-Não é necessário executar `npm install`: esta aplicação usa apenas recursos nativos do Node.js. Os **três testes iniciais devem passar**.
+Se outro integrante vai publicar commits, o proprietário pode conceder acesso pelo terminal:
 
-Com o servidor rodando, abra no navegador:
-
-<http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2>
-
-Resposta esperada:
-
-```json
-{"subtotalCentavos":2000,"totalCentavos":2000}
+```sh
+gh api --method PUT "repos/$REPO/collaborators/LOGIN-DO-INTEGRANTE" \
+  -f permission=push
 ```
 
-Isso representa duas unidades de R$ 10,00, totalizando R$ 20,00. A aplicação é uma API: o navegador mostra JSON, sem formulário visual.
+O destinatário deve aceitar o convite. Não compartilhem credenciais.
 
-Encerre o servidor com **Ctrl+C** antes de continuar. Sempre reinicie `npm start` após alterar o código; não há recarga automática.
+Habilite o workflow do fork, se estiver desativado:
 
-### Entender os arquivos
+```sh
+gh workflow list --all --repo "$REPO"
+gh workflow enable testes.yml --repo "$REPO"
+```
 
-| Arquivo na raiz do clone | Função |
+Se uma política da organização bloquear Actions, peça ao responsável para liberar a execução. A equipe também deve concluir a autorização do CodeRabbit para esse fork antes da etapa 6.
+
+## 3. Conhecer e executar a API inicial
+
+**Convenção:** todos os comandos seguintes são executados na raiz `devops-coderabbit-demo`, salvo indicação explícita. Usamos `npm --prefix app` para não precisar alternar de pasta.
+
+| Arquivo | Responsabilidade |
 |---|---|
-| `app/src/orcamento.js` | Regra de cálculo e validação |
-| `app/src/server.js` | API HTTP local na porta 3000 |
-| `app/test/orcamento.test.js` | Testes iniciais da regra e da API |
-| `.github/workflows/testes.yml` | Execução dos testes no GitHub Actions |
-| `.coderabbit.yaml` | Instruções de revisão para o CodeRabbit |
-| `demo/preparar.js` | Preparação da alteração didática e solução guiada |
-| `demo/desconto.test.js.txt` | Testes de regressão que serão adicionados depois |
+| `app/src/orcamento.js` | Cálculo e validação do orçamento |
+| `app/src/server.js` | API HTTP em `127.0.0.1:3000` |
+| `app/test/orcamento.test.js` | Três testes iniciais |
+| `.github/workflows/testes.yml` | CI executando `npm test` |
+| `.coderabbit.yaml` | Configuração de revisão em português |
+| `demo/preparar.js` | Gerador de defeito e solução guiada |
+| `demo/desconto.test.js.txt` | Três testes de regressão para copiar depois |
 
-### Contrato da nova funcionalidade
-
-- Preço: inteiro não negativo em centavos.
-- Quantidade: inteiro entre 1 e 100. O subtotal deve caber em um inteiro seguro de JavaScript.
-- Desconto: **percentual inteiro entre 0 e 100**, com padrão zero.
-- O desconto incide sobre o subtotal; o total é arredondado ao centavo mais próximo, com meio centavo para cima.
-- Entrada inválida deve produzir HTTP 400.
-- Exemplo: subtotal de 2000 centavos com desconto de 10% resulta em **1800 centavos**.
-
-A versão inicial ainda não implementa o desconto, embora a API já encaminhe esse parâmetro à função.
-
-## 4. Conectar o CodeRabbit ao fork
-
-O proprietário do fork realiza esta etapa:
-
-1. Entre em [CodeRabbit](https://app.coderabbit.ai/) com **Login with GitHub**.
-2. Selecione a conta ou organização que possui **o fork da equipe**.
-3. Instale/autorize o aplicativo GitHub do CodeRabbit. Em **Only select repositories**, selecione `devops-coderabbit-demo` dessa conta.
-4. Conclua **Install & Authorize** ou **Save**. Em uma organização, pode ser necessária a autorização de seu proprietário.
-5. Confirme no painel que o fork aparece entre os repositórios conectados.
-
-Se a tela inicial pedir um PR e a equipe ainda não criou nenhum, use **Skip to the app**, conclua a próxima etapa e depois solicite a revisão pelo GitHub. Instruções oficiais: [conectar CodeRabbit ao GitHub](https://docs.coderabbit.ai/platforms/github-com).
-
-### Preciso alterar as configurações no painel?
-
-O fork já contém `.coderabbit.yaml` na raiz, com idioma `pt-BR`, perfil `assertive`, resumo e revisão automática de PRs que não sejam rascunhos. O arquivo também orienta a análise de cálculos, validações e testes. O CodeRabbit lê a configuração da branch em revisão. [Documentação do YAML](https://docs.coderabbit.ai/getting-started/yaml-configuration).
-
-Na tela **General**, a opção **Use Organization Settings** pode deixar campos como **Language** desabilitados. Não é necessário alterar esses campos para iniciar a prática; mantenha o YAML fornecido. Para conferir a configuração efetivamente usada, publique posteriormente no PR:
-
-```text
-@coderabbitai configuration
-```
-
-A resposta informa a configuração resolvida e suas fontes. Se houver divergência de idioma ou comportamento, use essa resposta para investigar com o professor.
-
-**Instalar o aplicativo e configurar o YAML são etapas diferentes.** Só copiar o arquivo não concede acesso ao repositório. Esta integração não exige chave de API no workflow nem extensão de editor. Confira no painel a disponibilidade de revisão detalhada e os limites da conta antes da atividade; não é necessário contratar um plano para seguir as etapas locais.
-
-## 5. Preparar a alteração e abrir o PR
-
-Os comandos desta seção são executados **dentro da pasta `app`**, após encerrar o servidor:
+Execute:
 
 ```sh
-git switch -c pratica/coderabbit-desconto
-npm run demo:bug
-npm test
-git diff
-git add src/orcamento.js
+npm --prefix app test
+npm --prefix app start
+```
+
+Não é necessário `npm install`: a API não tem dependências externas. A primeira execução deve mostrar **3 testes passando**. O segundo comando mantém o servidor em execução.
+
+Em **outro terminal**, faça a requisição:
+
+```sh
+curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2"
+```
+
+Resultado: HTTP 200 e `{"subtotalCentavos":2000,"totalCentavos":2000}`. São duas unidades de R$ 10,00, totalizando R$ 20,00. A API retorna JSON; não existe página com formulário.
+
+Encerre o servidor com **Ctrl+C** no primeiro terminal e continue nele. Sempre reinicie o servidor após modificar arquivos, pois não há recarga automática.
+
+### Contrato que orienta a revisão
+
+| Entrada/regra | Comportamento exigido |
+|---|---|
+| Preço | Inteiro não negativo em centavos |
+| Quantidade | Inteiro entre 1 e 100 |
+| Subtotal | Preço × quantidade, dentro do limite de inteiro seguro do JavaScript |
+| Desconto novo | Percentual inteiro entre 0 e 100; padrão zero |
+| Arredondamento | Centavo mais próximo, com meio centavo para cima |
+| Entrada inválida | HTTP 400 |
+| Exemplo | 10% de desconto em 2000 centavos resulta em 1800 |
+
+A `main` contém a versão inicial sem desconto. A API já encaminha o parâmetro, mas a funcionalidade será implementada na branch do PR.
+
+## 4. Conferir a configuração do CodeRabbit
+
+```sh
+cat .coderabbit.yaml
+```
+
+O arquivo já configura português (`pt-BR`), perfil `assertive`, resumo, revisão automática para PRs prontos e instruções sobre validação e testes. Ele deve continuar na raiz do repositório. O CodeRabbit lê o YAML da branch revisada; copiar o arquivo não substitui a instalação do aplicativo. [Referência de configuração](https://docs.coderabbit.ai/getting-started/yaml-configuration).
+
+A CI e o CodeRabbit são independentes: o workflow executa testes; o aplicativo analisa o PR. Confira previamente a disponibilidade de revisão detalhada e os limites da conta. Se a integração estiver indisponível, conclua a parte local e registre a revisão externa como pendente.
+
+## 5. Criar a branch com o defeito didático
+
+Antes de executar, `git status --short` deve estar vazio:
+
+```sh
+git status --short
+git switch main
+git pull --ff-only origin main
+git switch -c "$BRANCH"
+git branch --show-current
+npm --prefix app run demo:bug
+npm --prefix app test
+git diff -- app/src/orcamento.js
+```
+
+**Ponto de conferência:** a branch deve ser `pratica/coderabbit-desconto`. O gerador muda a assinatura da função e subtrai `desconto` diretamente do subtotal. Os **3 testes passam**, porque ainda não exercitam o desconto.
+
+Publique somente a alteração da aplicação:
+
+```sh
+git add app/src/orcamento.js
 git commit -m "feat: adicionar desconto percentual ao orçamento"
-git push -u origin pratica/coderabbit-desconto
+git push -u origin "$BRANCH"
 ```
 
-O gerador introduz uma implementação defeituosa para análise. Os três testes continuam passando porque não verificam desconto. Observe em `git diff` qual cálculo foi adicionado.
+Nunca implemente o desconto diretamente na `main`: essa é a base para repetir a prática.
 
-No GitHub, abra o fork da equipe e clique em **Compare & pull request** ou **Pull requests → New pull request**. Confira antes de criar:
+## 6. Abrir o PR pelo terminal
 
-| Campo | Valor |
-|---|---|
-| Base repository | **Fork da equipe**, e não `unifor-docente/devops-coderabbit-demo` |
-| Base | `main` |
-| Head repository | Fork da equipe |
-| Compare | `pratica/coderabbit-desconto` |
+Crie um arquivo temporário com a descrição, preenchendo os integrantes antes de enviar:
 
-Se necessário, use **compare across forks** para selecionar os repositórios. Crie um PR normal, **sem marcar como draft**. Use o texto:
-
-```text
-Título: feat: adicionar desconto percentual ao orçamento
-
+```sh
+cat > /tmp/coderabbit-pr.md <<'TEXTO'
 Implementa desconto percentual no cálculo do orçamento.
 
 Critérios de aceite:
 - Desconto inteiro de 0 a 100, padrão zero.
 - 10% de desconto sobre 2000 centavos resulta em 1800 centavos.
 - Arredondamento ao centavo mais próximo, com meio centavo para cima.
-- Desconto inválido retorna HTTP 400.
+- Entrada inválida retorna HTTP 400.
 
-Validação inicial: os três testes de npm test passaram.
+Validação inicial: os três testes existentes passam.
 Solicitamos revisão da regra de negócio e da cobertura de testes.
 
 Contexto: atividade didática de revisão com IA.
-Equipe: preencher os nomes dos integrantes.
+Integrantes: PREENCHER.
+TEXTO
 ```
 
-## 6. Solicitar e interpretar a revisão
+Edite `/tmp/coderabbit-pr.md` no seu editor e abra o PR:
 
-1. Na aba **Conversation** do PR da equipe, procure a resposta do CodeRabbit.
-2. Se ainda não houver revisão, vá ao campo **Add a comment**, publique o comando abaixo e aguarde. O comando é escrito **no GitHub, não no terminal**.
+```sh
+gh pr create --repo "$REPO" --base main --head "$BRANCH" \
+  --title "feat: adicionar desconto percentual ao orçamento" \
+  --body-file /tmp/coderabbit-pr.md
 
-```text
-@coderabbitai review
+PR=$(gh pr view "$BRANCH" --repo "$REPO" --json number --jq .number)
+gh pr view "$PR" --repo "$REPO" \
+  --json url,baseRefName,headRefName,isDraft
 ```
 
-Esse comando solicita revisão manual; novos pushes também podem gerar revisão incremental. [Controles oficiais de revisão](https://docs.coderabbit.ai/configuration/auto-review).
+Confira `baseRefName: main`, `headRefName: pratica/coderabbit-desconto` e `isDraft: false`. O endereço deve pertencer ao fork da equipe. Guarde esse link: ele será a evidência da atividade.
 
-3. Leia o resumo em **Conversation** e os comentários nas linhas em **Files changed**.
-4. Escolha um apontamento e responda no próprio tópico, por exemplo:
+## 7. Solicitar e acompanhar a revisão da IA
 
-```text
-@coderabbitai Explique uma entrada que reproduza esse problema e a saída esperada segundo o contrato do PR.
+Consulte primeiro a conversa:
+
+```sh
+gh pr view "$PR" --repo "$REPO" --comments
 ```
 
-5. Registre se a equipe concorda e valide a observação pela execução ou por um teste.
+Se a revisão ainda não começou, solicite uma vez:
 
-**“All checks have passed” não significa necessariamente que a IA revisou o código.** Abra os detalhes dos checks: o job `testes` executa testes automatizados; a revisão do CodeRabbit deve ser verificada separadamente, pelos comentários e pelo estado da revisão. A IA pode deixar passar defeitos ou sugerir mudanças desnecessárias.
+```sh
+gh pr comment "$PR" --repo "$REPO" --body '@coderabbitai review'
+```
 
-## 7. Reproduzir os defeitos
+Acompanhe os checks e consulte os comentários novamente após alguns minutos:
 
-Dentro de `app`, execute `npm start` e abra:
+```sh
+gh pr checks "$PR" --repo "$REPO"
+gh pr view "$PR" --repo "$REPO" --comments
+```
 
-<http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2&desconto=10>
+Para acompanhar continuamente, use `gh pr checks "$PR" --repo "$REPO" --watch` e Ctrl+C para sair. Se ainda não houver checks, espere o GitHub criar a execução antes de repetir a consulta.
 
-A implementação defeituosa retorna **1990 centavos (R$ 19,90)**. O contrato exige **1800 centavos (R$ 18,00)**. O cálculo está subtraindo 10 centavos em vez de aplicar 10%.
-
-Experimente também estas entradas, mantendo preço 1000 e quantidade 2:
-
-| Desconto | Resultado correto |
+| Mensagem | Interpretação e ação |
 |---|---|
-| `0` | Total de 2000 centavos |
-| `100` | Total de zero centavos |
-| `-10` | HTTP 400 |
-| `101` | HTTP 400 |
-| `1.5` | HTTP 400 |
+| `Review triggered` | Pedido recebido; aguarde |
+| `Currently processing` / `Review in progress` | Análise em andamento; não repita o comando a cada consulta |
+| `Review finished` | Leia a revisão e os comentários nas linhas |
+| `testes` passou | Os testes existentes passaram; isso não comprova cobertura suficiente |
+| `Merge Risk: High` | Leia os problemas apontados e reproduza-os antes de decidir |
+| `Docstring Coverage` | Aviso sobre documentação; é diferente de erro de cálculo ou cobertura de testes |
 
-Para conferir o status HTTP, use a aba **Network/Rede** das ferramentas do navegador ou, em outro terminal:
-
-```sh
-curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2&desconto=-10"
-```
-
-Compare os resultados com os apontamentos da IA. Encerre o servidor com Ctrl+C.
-
-## 8. Adicionar testes antes de corrigir
-
-Ainda em `app`, copie os testes de regressão:
+Para ler os comentários nas linhas — que podem não aparecer integralmente em `gh pr view --comments` — execute:
 
 ```sh
-cp ../demo/desconto.test.js.txt test/desconto.test.js
-npm test
+gh api --paginate "repos/$REPO/pulls/$PR/comments" \
+  --jq '.[] | {autor: .user.login, arquivo: .path, linha: .line, texto: .body, link: .html_url}'
+
+gh api --paginate "repos/$REPO/pulls/$PR/reviews" \
+  --jq '.[] | {autor: .user.login, estado: .state, texto: .body}'
+
+gh pr diff "$PR" --repo "$REPO"
 ```
 
-Alternativamente, copie pelo editor o conteúdo de `demo/desconto.test.js.txt` para `app/test/desconto.test.js`.
-
-O resultado esperado agora é **três testes passando e três falhando**. Guarde a saída para a evidência. Leia as falhas: elas cobrem cálculo percentual, limites/arredondamento e validação do desconto.
-
-Para registrar a etapa com falha no histórico e no GitHub Actions:
+Se precisar conferir as opções efetivamente usadas:
 
 ```sh
-git add test/desconto.test.js
-git commit -m "test: reproduzir defeitos no desconto"
-git push
+gh pr comment "$PR" --repo "$REPO" --body '@coderabbitai configuration'
 ```
 
-Aguarde a execução desse commit em **Actions** e registre o link do resultado com falha antes de prosseguir. A falha aqui é esperada e comprova que os testes detectam os defeitos.
+Depois leia a resposta na conversa. Para solicitar esclarecimento sobre um apontamento:
 
-## 9. Corrigir e atualizar o mesmo PR
+```sh
+gh pr comment "$PR" --repo "$REPO" \
+  --body '@coderabbitai Explique uma entrada que reproduza o erro do desconto e a saída esperada segundo o contrato deste PR.'
+```
 
-Edite `app/src/orcamento.js` para atender ao contrato. Preserve a validação de preço, quantidade e subtotal. Valide o desconto e calcule o percentual com o arredondamento exigido.
+Registre a justificativa da equipe. A IA pode omitir defeitos ou propor mudanças desnecessárias; não aplique suas sugestões sem examinar o código. Referência: [revisões automáticas e manuais](https://docs.coderabbit.ai/configuration/auto-review).
+
+## 8. Reproduzir os defeitos na API
+
+Inicie o servidor no primeiro terminal:
+
+```sh
+npm --prefix app start
+```
+
+No segundo terminal:
+
+```sh
+curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2&desconto=10"
+curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2&desconto=-1"
+curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=1000&quantidade=2&desconto=101"
+curl -i "http://127.0.0.1:3000/orcamento?precoCentavos=3&quantidade=1&desconto=50"
+```
+
+| Caso | Resultado correto |
+|---|---|
+| 10% sobre 2000 | HTTP 200, total de 1800 centavos |
+| Desconto -1 ou 101 | HTTP 400 |
+| 50% sobre 3 centavos | HTTP 200, total de 2 centavos |
+
+A versão defeituosa retorna 1990 no primeiro caso e aceita descontos inválidos. Compare o resultado real com o contrato e com a revisão. Encerre o servidor com Ctrl+C.
+
+## 9. Criar testes que falham antes da correção
+
+Na raiz do clone, copie os testes fornecidos:
+
+```sh
+cp demo/desconto.test.js.txt app/test/desconto.test.js
+npm --prefix app test
+```
+
+**Esperado:** 3 testes iniciais passando e 3 novos falhando. Esses novos testes verificam percentual, limites/arredondamento e rejeição de argumentos inválidos na função. Eles não verificam diretamente o status HTTP.
+
+Para cobrir também a API, crie o arquivo abaixo:
+
+```sh
+cat > app/test/desconto-http.test.js <<'JAVASCRIPT'
+import { test } from 'node:test';
+import assert from 'node:assert/strict';
+import { criarServidor } from '../src/server.js';
+
+test('API aplica percentual e arredondamento e rejeita descontos inválidos', async (t) => {
+  const servidor = criarServidor();
+  await new Promise((resolve, reject) => {
+    servidor.once('error', reject);
+    servidor.listen(0, '127.0.0.1', resolve);
+  });
+  t.after(() => new Promise(resolve => servidor.close(resolve)));
+  const base = `http://127.0.0.1:${servidor.address().port}/orcamento`;
+
+  for (const [preco, quantidade, desconto, total] of [
+    [1000, 2, 10, 1800],
+    [3, 1, 50, 2],
+    [1000, 2, 0, 2000],
+    [1000, 2, 100, 0],
+  ]) {
+    const resposta = await fetch(
+      `${base}?precoCentavos=${preco}&quantidade=${quantidade}&desconto=${desconto}`,
+    );
+    assert.equal(resposta.status, 200);
+    assert.equal((await resposta.json()).totalCentavos, total);
+  }
+
+  for (const desconto of ['-1', '101', '10.5', 'abc', '']) {
+    const resposta = await fetch(`${base}?precoCentavos=1000&quantidade=2&desconto=${desconto}`);
+    assert.equal(resposta.status, 400, `desconto=${desconto} deve ser rejeitado`);
+    assert.equal(typeof (await resposta.json()).erro, 'string');
+  }
+});
+JAVASCRIPT
+
+npm --prefix app test
+```
+
+Agora são **7 testes: 3 passam e 4 falham** na versão defeituosa. A primeira asserção que falha interrompe seu teste; por isso, leia também os demais casos escritos, mesmo que ainda não apareçam como falhas separadas.
+
+Registre a etapa com erro no histórico:
+
+```sh
+git add app/test/desconto.test.js app/test/desconto-http.test.js
+git commit -m "test: reproduzir defeitos do desconto na função e na API"
+git push origin "$BRANCH"
+
+gh run list --repo "$REPO" --branch "$BRANCH" --limit 5
+```
+
+Identifique a execução do commit recém-enviado. Substitua `ID-DA-EXECUCAO` pelo número retornado:
+
+```sh
+gh run watch ID-DA-EXECUCAO --repo "$REPO" --exit-status
+gh run view ID-DA-EXECUCAO --repo "$REPO" --log-failed
+gh run view ID-DA-EXECUCAO --repo "$REPO" --json url --jq .url
+```
+
+O status de falha é esperado nesta etapa. Guarde o link antes de corrigir. Podem existir duas execuções, uma de push e outra de pull request; ambas executam a mesma suíte.
+
+## 10. Corrigir a implementação localmente
+
+Confira a branch e abra `app/src/orcamento.js` no editor:
+
+```sh
+git branch --show-current
+git status --short
+```
+
+A branch deve ser **`pratica/coderabbit-desconto`**. Faça duas alterações:
+
+1. Valide `desconto`: inteiro entre 0 e 100, lançando erro quando inválido.
+2. Substitua apenas `const totalCentavos = subtotalCentavos - desconto;` pelo cálculo percentual com arredondamento.
+
+**Preserve `const subtotalCentavos = precoCentavos * quantidade;`** e sua validação. Subtotal e total têm funções distintas; remover o subtotal ou usar uma variável antes de declará-la quebra a API.
 
 <details>
-<summary>Solução guiada — abra após discutir a correção com a equipe</summary>
+<summary>Solução de referência — consulte após discutir o diagnóstico</summary>
 
-Se a função ainda contém o trecho defeituoso original, execute dentro de `app`:
+Uma implementação completa, com a decomposição do cálculo sugerida na demonstração, é:
 
-```sh
-npm run demo:fix
+```js
+export function calcularOrcamento(precoCentavos, quantidade, desconto = 0) {
+  if (!Number.isInteger(desconto) || desconto < 0 || desconto > 100) {
+    throw new Error('Desconto deve ser um inteiro entre 0 e 100.');
+  }
+  if (!Number.isSafeInteger(precoCentavos) || precoCentavos < 0) {
+    throw new Error('Preço deve ser um inteiro não negativo em centavos.');
+  }
+  if (!Number.isSafeInteger(quantidade) || quantidade < 1 || quantidade > 100) {
+    throw new Error('Quantidade deve ser um inteiro entre 1 e 100.');
+  }
+  const subtotalCentavos = precoCentavos * quantidade;
+  if (!Number.isSafeInteger(subtotalCentavos)) {
+    throw new Error('Subtotal excede o limite suportado.');
+  }
+  const fator = 100 - desconto;
+  const parteInteira = Math.floor(subtotalCentavos / 100);
+  const resto = subtotalCentavos % 100;
+  const totalCentavos =
+    parteInteira * fator + Math.floor((resto * fator + 50) / 100);
+  return { subtotalCentavos, totalCentavos };
+}
 ```
 
-O script aplica a solução e copia novamente os testes fornecidos. Se a equipe já alterou o trecho, ele recusará a substituição; conclua manualmente. Ele não precisa ser executado se a correção manual já estiver pronta.
+O fator representa o percentual restante. A decomposição evita multiplicar diretamente todo o subtotal por 100; somar 50 antes da divisão inteira implementa o arredondamento exigido para valores não negativos.
 
-A solução fornecida usa `BigInt` no cálculo intermediário para evitar perda de precisão perto do limite de inteiros seguros e converte o total de volta para número.
+Como alternativa, se o código ainda estiver exatamente na versão defeituosa original, execute `npm --prefix app run demo:fix`. O script usa uma solução equivalente com `BigInt` e copia os testes fornecidos. Não execute ambas as alternativas. Se a turma já alterou o código, conclua manualmente: o script não é uma ferramenta para mesclar edições.
 
 </details>
 
-Execute:
+Valide:
 
 ```sh
-npm test
+npm --prefix app test
+git diff --check
+git diff -- app/src/orcamento.js
 ```
 
-Os **seis testes fornecidos devem passar**. Reinicie a API e repita os exemplos da seção 7: 10% deve retornar 1800 e desconto inválido deve produzir HTTP 400. Confira também preço de 101 centavos, quantidade 1 e desconto de 50%: o total esperado é 51 centavos. Encerre o servidor.
+**Esperado: 7 testes passando**, incluindo o novo teste HTTP. Não basta tornar a CI verde removendo asserções ou aceitando resultados incorretos. Reinicie a API e repita os exemplos da etapa 8 para verificar também a execução manual.
 
-Envie a correção, ainda dentro de `app`:
+Envie a correção ao mesmo PR:
 
 ```sh
-git add src/orcamento.js test/desconto.test.js
+git add app/src/orcamento.js
 git commit -m "fix: validar desconto e corrigir cálculo percentual"
-git push
+git push origin "$BRANCH"
+
+gh pr checks "$PR" --repo "$REPO"
+gh run list --repo "$REPO" --branch "$BRANCH" --limit 5
 ```
 
-O PR existente será atualizado automaticamente; não abra outro. Acompanhe os testes do commit mais recente e a nova revisão do CodeRabbit. Se necessário, comente novamente `@coderabbitai review`.
+Acompanhe a execução do novo commit com `gh run watch`, como na etapa anterior. **Não abra outro PR**: o existente recebe os novos commits automaticamente.
 
-## 10. Revisão humana e evidências
+## 11. Ler a nova revisão e registrar a decisão humana
 
-Outro integrante deve examinar o diff, os testes e as respostas do bot. Registre no PR uma conclusão usando este modelo:
-
-```text
-Equipe e integrantes:
-
-Apontamento da IA analisado (link):
-Decisão: aceito / rejeitado, porque...
-Entrada utilizada para reprodução:
-Resultado antes e resultado depois:
-Link da execução de testes com falha:
-Link da execução de testes corrigida:
-Commit da correção:
-Limitação ou sugestão da IA que exigiu análise humana:
-Revisor humano e conclusão:
+```sh
+gh pr view "$PR" --repo "$REPO" --comments
+gh api --paginate "repos/$REPO/pulls/$PR/comments" \
+  --jq '.[] | {arquivo: .path, linha: .line, texto: .body, link: .html_url}'
 ```
 
-A evidência principal é o **link do PR da equipe**, com esse registro. Mantenha-a no repositório da equipe; se a disciplina centraliza a entrega no repositório do projeto integrador, inclua nele o link desta prática.
+Aguarde a revisão incremental. Se ela não iniciar, solicite com `gh pr comment "$PR" --repo "$REPO" --body '@coderabbitai review'`. Comentários antigos permanecem como histórico; confira a qual commit/trecho se referem antes de concluir que o problema continua.
 
-Checklist de conclusão:
+Outro integrante deve comparar o contrato, a alteração e os testes. Não aceite nem rejeite um comentário apenas porque ele veio de uma IA. Um aviso de documentação pode ser tratado com uma descrição clara da função, mas não substitui validar a regra de negócio.
 
-- [ ] Fork da equipe conectado ao CodeRabbit.
-- [ ] PR aberto dentro do próprio fork.
-- [ ] Revisão real da IA registrada e um apontamento analisado criticamente.
-- [ ] Defeito reproduzido e teste de regressão falhando antes da correção.
-- [ ] Correção enviada ao mesmo PR, testes locais e CI passando.
-- [ ] Nova revisão acompanhada e decisão humana registrada.
+Crie a evidência no próprio repositório:
 
-Faça merge no fork somente após esses critérios e a revisão humana. O PR do professor permanece como referência de demonstração. Se a integração externa estiver indisponível, registre o bloqueio e conclua as etapas locais; a revisão da IA fica pendente, sem inventar comentários ou atribuir à ferramenta uma análise feita pela equipe.
+```sh
+mkdir -p evidencias
+cat > evidencias/revisao-coderabbit.md <<'TEXTO'
+# Evidência da prática CodeRabbit
 
-## Problemas comuns
+- Equipe e integrantes:
+- URL do PR:
+- Link do apontamento da IA analisado:
+- Decisão da equipe e justificativa:
+- Entrada usada para reprodução:
+- Resultado antes da correção:
+- Resultado depois da correção:
+- URL da execução com testes falhando:
+- URL da execução com testes passando:
+- Commit da correção:
+- Limitação da IA ou sugestão que exigiu análise humana:
+- Revisor humano e conclusão:
+TEXTO
+```
 
-| Situação | Como proceder |
+Preencha o arquivo no editor. Depois publique-o e registre a conclusão na conversa:
+
+```sh
+git add evidencias/revisao-coderabbit.md
+git commit -m "docs: registrar evidências da revisão com IA"
+git push origin "$BRANCH"
+gh pr comment "$PR" --repo "$REPO" --body-file evidencias/revisao-coderabbit.md
+```
+
+O workflow filtra alterações em código/testes/configuração; um commit contendo apenas `evidencias/` pode não iniciar outra execução. Nesse caso, associe a evidência ao commit de código testado, sem afirmar que houve um novo teste.
+
+## 12. Entrega e preservação da atividade
+
+Entregue o **link do PR da equipe** e inclua esse link no repositório do projeto integrador, onde ficam as evidências da disciplina.
+
+- [ ] Fork próprio e CodeRabbit autorizado para ele.
+- [ ] PR da branch de trabalho para a `main` do próprio fork.
+- [ ] Revisão real da IA e apontamento analisado com justificativa.
+- [ ] Testes de regressão falhando antes da correção.
+- [ ] Sete testes passando após a correção, incluindo HTTP.
+- [ ] Execuções de CI e commit de correção identificados.
+- [ ] Evidência versionada e decisão humana registrada.
+
+**Nesta prática, deixe o PR corrigido aberto, sem merge.** Assim a `main` mantém a aplicação inicial e outra execução pode gerar os defeitos novamente. O PR do professor também serve como referência do processo. Não é preciso recolocar erros na versão corrigida nem reescrever seu histórico.
+
+Para repetir em um fork cuja `main` continua inicial, encerre processos locais, verifique que não há mudanças pendentes e crie outra branch:
+
+```sh
+git status --short
+git switch main
+git pull --ff-only origin main
+BRANCH="pratica/coderabbit-desconto-2"
+git switch -c "$BRANCH"
+npm --prefix app run demo:bug
+```
+
+Retome os testes, commit, push e criação de PR das etapas 5 e 6. Atualize a variável `PR` para o novo número. O roteiro e os defeitos são conhecidos: esta é uma demonstração guiada, não um teste cego da capacidade da IA.
+
+## Problemas comuns e recuperação
+
+| Situação | Como diagnosticar e continuar |
 |---|---|
-| Repositório não aparece no CodeRabbit | Confira a conta/organização selecionada e o acesso do aplicativo ao fork; atualize a lista após salvar a autorização. |
-| Não há PR para selecionar no onboarding | Use **Skip to the app**, crie o PR e solicite a revisão nele. |
-| Bot não responde ao comando | Confirme que o comando foi publicado, o PR está no fork autorizado e não é draft; consulte avisos de acesso, habilitação e limites no painel. Evite enviar o mesmo comando repetidamente. |
-| Campos de configuração desabilitados | Veja **Use Organization Settings**; consulte a configuração efetiva com `@coderabbitai configuration`. |
-| Há checks verdes, mas nenhum comentário da IA | Confira os nomes dos checks. Testes da CI e revisão do CodeRabbit são verificações distintas. |
-| Nenhum workflow executa no fork | Abra **Actions**, habilite os workflows quando solicitado e reenvie uma alteração de código/teste. |
-| `npm` não encontra `package.json` | Entre na pasta `app` do clone da API. |
-| Porta 3000 ocupada | Encerre a execução anterior da API com Ctrl+C antes de iniciar outra. |
-| API continua exibindo o resultado antigo | Reinicie `npm start` após salvar o código. |
-| `demo:bug` ou `demo:fix` recusa a alteração | O script espera uma versão específica. Confira `git diff` e a branch; não descarte o trabalho da equipe. Solicite ajuda ao professor. |
-| Push negado | Confira `git remote -v`, autenticação e permissão de escrita no fork. |
+| `gh` usa outra conta | Execute `gh auth status`; se necessário, `gh auth switch` e confira as permissões. |
+| Variáveis vazias em um novo terminal | Redefina `DONO`, `REPO` e `BRANCH`; recupere `PR` com o comando da etapa 6. |
+| PR aparece no repositório do professor | Confira `REPO` e use explicitamente `--repo "$REPO"`; o destino deve ser o fork. |
+| Push negado | Confira `git remote -v`, autenticação e acesso de escrita. |
+| Revisão não inicia | Confirme autorização do App para o fork, PR não draft, limites e resposta ao comando; registre a pendência se depender do administrador. |
+| Bot ainda processando | Aguarde e consulte novamente; não envie comandos em sequência. |
+| CI verde, sem revisão | São verificações independentes. Consulte os comentários e o check CodeRabbit. |
+| Nenhum workflow executa | Use `gh workflow list --all` e `gh workflow enable testes.yml`, ambos com `--repo "$REPO"`; confira políticas e caminhos alterados. |
+| Testes falham | Consulte `gh run view ID --log-failed --repo "$REPO"` e reproduza com `npm --prefix app test`. |
+| Porta 3000 ocupada | Encerre o servidor anterior com Ctrl+C. |
+| API apresenta código antigo | Reinicie o servidor depois de salvar. |
+| Gerador recusa a alteração | Confira branch e `git diff`. Ele espera a versão inicial (`demo:bug`) ou o trecho defeituoso (`demo:fix`); não descarte edições para forçá-lo. |
+| Subtotal ou desconto não definido | Confira assinatura e declaração do subtotal conforme a solução de referência. |
+| Push rejeitado após edição remota | Com diretório limpo, execute `git pull --rebase origin "$BRANCH"`, resolva eventuais conflitos e teste; não use force push. |
+
+Se você perceber que editou a `main` **antes de commitar**, interrompa o fluxo e use `git switch -c resgate/alteracao` para preservar as mudanças em uma nova branch. Se já publicou o commit errado, peça apoio para criar um commit de reversão específico; não use `reset --hard` ou force push no repositório compartilhado. A correção deve ir para a branch do PR.
 
 ## Discussão final
 
-1. Por que os testes iniciais passavam com o desconto errado?
-2. Quais problemas a IA identificou e quais a equipe encontrou por conta própria?
-3. Como um teste transforma uma sugestão da IA em evidência verificável?
-4. Quem assume a responsabilidade pelo merge?
+1. Por que os testes iniciais passaram com o cálculo errado?
+2. O que a IA encontrou e o que a equipe precisou descobrir?
+3. Qual a diferença entre teste da função e teste da API HTTP?
+4. Que evidência justifica aceitar ou rejeitar uma sugestão?
+5. Por que a revisão da IA não elimina a responsabilidade humana?
 
-Esta é uma demonstração guiada: o roteiro e os exemplos de defeito ficam visíveis no repositório, portanto não constituem um teste cego da capacidade da IA. A prática apoia a aula e não altera a escolha livre da aplicação nem os critérios de avaliação do projeto integrador.
+Referências adicionais: [manual do GitHub CLI](https://cli.github.com/manual/), [criar forks pela CLI](https://cli.github.com/manual/gh_repo_fork) e [criar PRs pela CLI](https://cli.github.com/manual/gh_pr_create). Esta atividade não altera os critérios de avaliação do projeto integrador.
