@@ -27,6 +27,12 @@ Um único projeto evolui incrementalmente a cada encontro (diagnóstico → repo
 CI → containers → release/rollback → observabilidade). Regras completas em
 [`Práticas/Desenvolvimento de Software Integrado - DevOps - Projeto Integrador (Enunciado).docx`](Práticas/).
 
+## Prática com CodeRabbit
+
+[`Revisão de código com IA`](Práticas/coderabbit/README.md): roteiro e acesso ao [repositório da API](https://github.com/unifor-docente/devops-coderabbit-demo),
+com testes automatizados e um PR didático com defeitos para revisar e corrigir.
+Roteiro de 45–60 minutos para o Encontro 2.
+
 ## Professor
 
 Arimatéia Júnior — [linkedin.com/in/arimateiajunior](https://www.linkedin.com/in/arimateiajunior)
