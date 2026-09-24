@@ -1,0 +1,55 @@
+{
+  "project": "e6-validacao-e9353b78",
+  "port": 44621,
+  "antes": {
+    "amostras": 10,
+    "boas": 10,
+    "falhas": 0,
+    "sucesso_pct": 100.0,
+    "p95_ms": 18.65,
+    "metodo_percentil": "nearest-rank",
+    "origem": "sonda cliente serial; inclui rede e leitura da resposta"
+  },
+  "durante": {
+    "amostras": 5,
+    "boas": 0,
+    "falhas": 5,
+    "sucesso_pct": 0.0,
+    "p95_ms": 1502.76,
+    "metodo_percentil": "nearest-rank",
+    "origem": "sonda cliente serial; inclui rede e leitura da resposta"
+  },
+  "depois": {
+    "amostras": 10,
+    "boas": 10,
+    "falhas": 0,
+    "sucesso_pct": 100.0,
+    "p95_ms": 28.13,
+    "metodo_percentil": "nearest-rank",
+    "origem": "sonda cliente serial; inclui rede e leitura da resposta"
+  },
+  "lentidao": {
+    "amostras": 10,
+    "boas": 10,
+    "falhas": 0,
+    "sucesso_pct": 100.0,
+    "p95_ms": 418.76,
+    "metodo_percentil": "nearest-rank",
+    "origem": "sonda cliente serial; inclui rede e leitura da resposta"
+  },
+  "restaurado": {
+    "amostras": 10,
+    "boas": 10,
+    "falhas": 0,
+    "sucesso_pct": 100.0,
+    "p95_ms": 19.08,
+    "metodo_percentil": "nearest-rank",
+    "origem": "sonda cliente serial; inclui rede e leitura da resposta"
+  },
+  "total_preservado": 1,
+  "api_preservada_no_incidente": true,
+  "request_id_correlacionado": true,
+  "query_nao_registrada": true,
+  "histograma_cumulativo": true,
+  "metricas_zeradas_na_recriacao": true
+}

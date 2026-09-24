@@ -1,0 +1,8 @@
+{
+  "name": "encontro-4-containers",
+  "version": "1.0.0",
+  "private": true,
+  "description": "API didática de contador persistente para Docker Compose",
+  "scripts": {"start": "node server.js"},
+  "dependencies": {"pg": "8.16.3"}
+}

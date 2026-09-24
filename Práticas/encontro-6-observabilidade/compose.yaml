@@ -1,0 +1,37 @@
+name: unifor-encontro6
+services:
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:${PORTA_HOST:-18086}:3000"
+    environment:
+      # Credenciais públicas e fictícias, somente para este laboratório local.
+      DATABASE_URL: postgres://aula:aula@db:5432/aula
+      HOST: 0.0.0.0
+      DEMO_DELAY_MS: ${DEMO_DELAY_MS:-0}
+    depends_on:
+      db:
+        condition: service_healthy
+    healthcheck:
+      test: ["CMD", "node", "-e", "fetch('http://127.0.0.1:3000/health/ready').then(r=>process.exit(r.ok?0:1)).catch(()=>process.exit(1))"]
+      interval: 5s
+      timeout: 4s
+      retries: 5
+      start_period: 10s
+  db:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: aula
+      POSTGRES_PASSWORD: aula
+      POSTGRES_DB: aula
+    volumes:
+      - dados:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/01-init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U aula -d aula"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+      start_period: 10s
+volumes:
+  dados:
