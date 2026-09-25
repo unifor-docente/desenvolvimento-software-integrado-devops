@@ -1,16 +1,17 @@
 # Verificações e respostas comentadas
 
-As cinco verificações aparecem depois da explicação e da demonstração de seus blocos. Cada uma tem três situações, seguidas de um slide com respostas explicadas. Os casos resolvidos mostram decisões de promoção, contenção, rollback e segurança.
+As seis verificações aparecem depois da explicação e da demonstração de seus blocos. Cada uma tem três situações, seguidas de um slide com respostas explicadas. Os casos resolvidos mostram decisões de promoção, contenção, rollback e segurança.
 
 Use o rodapé E5·NN. A página no PDF independente corresponde ao número + 1, devido à capa.
 
 | Questões | Gabarito | Bloco |
 |---|---|---|
-| E5·09 | E5·10 | Verificação | Fluxo e identidade |
-| E5·17 | E5·18 | Verificação | Configuração e acesso |
-| E5·36 | E5·37 | Verificação | Recuperação e dados |
-| E5·47 | E5·48 | Verificação | Segurança e governança |
-| E5·52 | E5·53 | Verificação | Decidir a entrega do projeto |
+| E5·12 | E5·13 | Verificação — Fluxo e identidade |
+| E5·20 | E5·21 | Verificação — Configuração e acesso |
+| E5·36 | E5·37 | Verificação — Distinguir CI, entrega e implantação |
+| E5·46 | E5·47 | Verificação — Recuperação e dados |
+| E5·57 | E5·58 | Verificação — Segurança e governança |
+| E5·62 | E5·63 | Verificação — Decidir a entrega do projeto |
 
 ## Verificação | Fluxo e identidade
 
@@ -40,6 +41,21 @@ Use o rodapé E5·NN. A página no PDF independente corresponde ao número + 1, 
 **Pergunta:** Salvar um compose.yaml no Git é suficiente para chamar o fluxo de GitOps?
 
 **Resposta explicada:** Não. O ciclo GitOps também envolve obtenção automática e reconciliação contínua do estado desejado.
+
+
+## Verificação | Distinguir CI, entrega e implantação
+
+**Pergunta:** O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?
+
+**Resposta explicada:** Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.
+
+**Pergunta:** A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?
+
+**Resposta explicada:** Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.
+
+**Pergunta:** O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?
+
+**Resposta explicada:** Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta.
 
 
 ## Verificação | Recuperação e dados

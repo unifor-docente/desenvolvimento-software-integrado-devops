@@ -60,9 +60,9 @@ Consulte o [índice de perguntas e respostas](Slides/Encontro%204%20-%20Recursos
 
 ## Encontro 5 — entrega e governança
 
-Capítulo reestruturado com **60 slides de conteúdo + capa**, fundamentos antes das perguntas,
-11 diagramas, cinco verificações com gabaritos, exemplos preenchidos e demonstração local de contenção e rollback.
-E5 ocupa as posições **186–246** dos slides principais. A apostila e o guia PowerPoint também foram atualizados.
+Capítulo reestruturado com **70 slides de conteúdo + capa**, fundamentos antes das perguntas,
+15 diagramas, seis verificações com gabaritos, exemplos preenchidos e demonstração local de contenção e rollback.
+E5 ocupa as posições **186–256** dos slides principais. A apostila e o guia PowerPoint também foram atualizados.
 
 - [PowerPoint do Encontro 5](Slides/Encontro%205%20-%20Recursos/Encontro%205%20-%20Entrega%20e%20Governança.pptx)
 - [PDF do Encontro 5](Slides/Encontro%205%20-%20Recursos/Encontro%205%20-%20Entrega%20e%20Governança.pdf)

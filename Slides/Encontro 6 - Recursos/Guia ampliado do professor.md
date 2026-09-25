@@ -1,6 +1,6 @@
 # Encontro 6 — Guia ampliado do professor
 
-59 slides de conteúdo + capa institucional • 26/09/2026 • 4h presenciais. No conjunto principal: posições 247–306. Revisão: 23/09/2026.
+59 slides de conteúdo + capa institucional • 26/09/2026 • 4h presenciais. No conjunto principal: posições 257–316. Revisão: 23/09/2026.
 
 Sequência: fundamentos e sinais → indicadores e objetivos → investigação → demonstração → revisão de IA → preparação e apresentação do projeto. Preservar 35 minutos de preparação e 56 de apresentações (até sete equipes, falas de 5–7 minutos). O exemplo da API não substitui o projeto escolhido. As verificações têm gabaritos comentados; os últimos quatro slides são consulta.
 

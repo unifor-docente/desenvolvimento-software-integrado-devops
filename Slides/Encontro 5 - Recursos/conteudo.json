@@ -1,8 +1,8 @@
 [
   {
     "id": "percurso",
-    "title": "Do ambiente executável à entrega controlada",
-    "sub": "Encontro 5 • a aplicação do projeto continua a mesma",
+    "title": "Entrega contínua e implantação: do artefato ao destino",
+    "sub": "E5 • Continuous Delivery e Continuous Deployment, com papéis distintos",
     "cards": [
       [
         "Base do E4",
@@ -10,7 +10,7 @@
       ],
       [
         "Avanço do E5",
-        "Identificar a versão entregue.\nControlar configuração e liberação.\nPreparar recuperação e segurança."
+        "Distinguir entrega e implantação.\nAutomatizar passos de promoção.\nValidar e recuperar no destino."
       ],
       [
         "Evidência final",
@@ -35,15 +35,15 @@
     "cards": [
       [
         "0–60 min | Base",
-        "0–10: contexto e objetivo.\n10–35: CI/CD e promoção.\n35–60: configuração, segredos e IaC."
+        "0–10: objetivo.\n10–40: CI, Delivery e Deployment.\n40–60: configuração e acesso."
       ],
       [
-        "60–165 min | Controle",
-        "60–90: deploy e recuperação.\n90–105: intervalo.\n105–140: demo guiada.\n140–165: segurança e IA."
+        "60–165 min | Entrega",
+        "60–90: estratégias e automação.\n90–105: intervalo.\n105–140: ensaio local guiado.\n140–165: segurança e IA."
       ],
       [
         "165–240 min | Projeto",
-        "165–235: trabalho das equipes.\n235–240: fechamento.\nConsultas disponíveis após a trilha."
+        "165–235: plano e ensaio da equipe.\n235–240: síntese.\nConsulta conforme a necessidade."
       ]
     ],
     "note": "Os 240 minutos incluem intervalo de 15 e prática de 70. Ensaiar e baixar imagens antes evita consumir o laboratório com downloads. As tabelas são referências para explicação, não comandos que todos precisam executar em sequência. Faça as verificações no tempo do próprio bloco. O projeto precisa de um plano acionável; um ensaio local acrescenta evidência, mas não transforma a entrega em obrigação de hospedar em produção.",
@@ -149,6 +149,108 @@
     "source_id": 4
   },
   {
+    "id": "ci_boundary",
+    "title": "CI: validar a mudança antes da entrega",
+    "sub": "Retomada do E3 • ainda não há implantação no ambiente dos usuários",
+    "cards": [],
+    "note": "CI combina integração frequente com verificações automatizadas. Um build verde não prova implantação. O teste pode iniciar containers temporários no runner e continuar sendo apenas validação da candidata. Pergunte de onde o usuário está acessando: se o serviço só existiu durante o job de teste, não houve uma entrega persistente para ele.",
+    "takeaway": "CI fornece evidência sobre a mudança; CD acrescenta o caminho de implantação e validação no destino.",
+    "kind": "flow",
+    "code": null,
+    "section": "Fundamentos",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "nodes": [
+      [
+        "Mudança",
+        "Commit / PR\nCódigo revisado"
+      ],
+      [
+        "Verificações",
+        "Build e testes\nResultado por commit"
+      ],
+      [
+        "Artefato",
+        "Imagem candidata\nConteúdo identificado"
+      ],
+      [
+        "Limite da CI",
+        "Validação concluída\nDestino ainda não mudou"
+      ]
+    ],
+    "source_id": 5
+  },
+  {
+    "id": "delivery_flow",
+    "title": "Continuous Delivery: pronta para implantar",
+    "sub": "Entrega contínua • exemplo com decisão humana antes da produção",
+    "cards": [],
+    "note": "A entrega contínua mantém o software em condição de ser implantado de modo confiável quando decidido. Neste exemplo, a automação executa o deploy após uma aprovação. A pessoa decide se e quando promover; não precisa digitar cada comando. A aprovação não é obrigatória em todo ambiente de uma prática de entrega contínua: ela marca a diferença no fluxo comparado aqui. Release notes sem capacidade de execução não demonstram sozinhas essa prática.",
+    "takeaway": "Entrega contínua: a versão está pronta; a decisão de promover para produção pode ser humana.",
+    "kind": "flow",
+    "code": null,
+    "section": "Fundamentos",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "nodes": [
+      [
+        "Candidata",
+        "CI e artefato\nValidados"
+      ],
+      [
+        "Homologação",
+        "Implantar e testar\nAutomático"
+      ],
+      [
+        "Aprovação",
+        "Decidir a promoção\nIntervenção humana"
+      ],
+      [
+        "Produção",
+        "Deploy + smoke\nPassos automatizados"
+      ]
+    ],
+    "source_id": 6
+  },
+  {
+    "id": "deployment_flow",
+    "title": "Continuous Deployment: implantar automaticamente",
+    "sub": "Implantação contínua • comparação usando o mesmo artefato e destino",
+    "cards": [],
+    "note": "Na implantação contínua, as mudanças que satisfazem os critérios chegam automaticamente à produção, sem aprovação manual por versão nessa passagem. Isso não elimina revisão de código, testes, limites de acesso ou resposta a incidentes. Uma flag pode manter uma capacidade desligada apesar do deploy. Automatizar somente a homologação não comprova implantação contínua em produção. Compare as duas figuras apontando exatamente o lugar onde a decisão difere.",
+    "takeaway": "Implantação contínua: a política promove para produção; automatizar apenas testes continua sendo CI.",
+    "kind": "flow",
+    "code": null,
+    "section": "Fundamentos",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "nodes": [
+      [
+        "Candidata",
+        "CI e artefato\nValidados"
+      ],
+      [
+        "Homologação",
+        "Implantar e testar\nAutomático"
+      ],
+      [
+        "Política",
+        "Critérios automáticos\nSem aceite por versão"
+      ],
+      [
+        "Produção",
+        "Deploy + smoke\nObservar e reagir"
+      ]
+    ],
+    "source_id": 7
+  },
+  {
     "id": "pipeline",
     "title": "O caminho de uma mudança até o usuário",
     "sub": "Uma falha num gate interrompe a promoção",
@@ -180,7 +282,7 @@
         "Promoção\nValidação e observação"
       ]
     ],
-    "source_id": 5
+    "source_id": 8
   },
   {
     "id": "artifact",
@@ -209,7 +311,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 6
+    "source_id": 9
   },
   {
     "id": "environments",
@@ -238,7 +340,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 7
+    "source_id": 10
   },
   {
     "id": "gates",
@@ -291,7 +393,7 @@
       0.49,
       0.31
     ],
-    "source_id": 8
+    "source_id": 11
   },
   {
     "id": "base",
@@ -325,7 +427,7 @@
       "Reconstruir a mesma tag em homologação e produção garante o mesmo artefato?",
       "Um deploy com a funcionalidade desligada por flag já a liberou ao usuário?"
     ],
-    "source_id": 9
+    "source_id": 12
   },
   {
     "id": "base_resposta",
@@ -360,7 +462,7 @@
       "Não necessariamente. O código está instalado, mas a flag ainda controla a disponibilidade da funcionalidade."
     ],
     "answers_for": "base",
-    "source_id": 10
+    "source_id": 13
   },
   {
     "id": "config",
@@ -389,7 +491,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 11
+    "source_id": 14
   },
   {
     "id": "compose_config",
@@ -414,7 +516,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 12
+    "source_id": 15
   },
   {
     "id": "secrets",
@@ -443,7 +545,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 13
+    "source_id": 16
   },
   {
     "id": "leak",
@@ -472,7 +574,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 14
+    "source_id": 17
   },
   {
     "id": "iac",
@@ -506,7 +608,7 @@
         "Executar mudança\nVerificar resultado"
       ]
     ],
-    "source_id": 15
+    "source_id": 18
   },
   {
     "id": "gitops",
@@ -536,7 +638,7 @@
         "Estado observado\nDesvio é reportado"
       ]
     ],
-    "source_id": 16
+    "source_id": 19
   },
   {
     "id": "configuration",
@@ -570,7 +672,7 @@
       "Trocar FEATURE_BANNER no terminal muda imediatamente a API já iniciada?",
       "Salvar um compose.yaml no Git é suficiente para chamar o fluxo de GitOps?"
     ],
-    "source_id": 17
+    "source_id": 20
   },
   {
     "id": "configuration_resposta",
@@ -605,7 +707,7 @@
       "Não. O ciclo GitOps também envolve obtenção automática e reconciliação contínua do estado desejado."
     ],
     "answers_for": "configuration",
-    "source_id": 18
+    "source_id": 21
   },
   {
     "id": "strategies",
@@ -653,7 +755,7 @@
       0.4,
       0.41
     ],
-    "source_id": 19
+    "source_id": 22
   },
   {
     "id": "rolling",
@@ -670,7 +772,7 @@
     "answer": "",
     "study_only": false,
     "mode": "rolling",
-    "source_id": 20
+    "source_id": 23
   },
   {
     "id": "bluegreen",
@@ -687,7 +789,7 @@
     "answer": "",
     "study_only": false,
     "mode": "bluegreen",
-    "source_id": 21
+    "source_id": 24
   },
   {
     "id": "canary",
@@ -704,7 +806,7 @@
     "answer": "",
     "study_only": false,
     "mode": "canary",
-    "source_id": 22
+    "source_id": 25
   },
   {
     "id": "flags",
@@ -733,7 +835,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 23
+    "source_id": 26
   },
   {
     "id": "rollback",
@@ -762,7 +864,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 24
+    "source_id": 27
   },
   {
     "id": "migration",
@@ -792,7 +894,7 @@
         "Remover campo antigo\nApós janela de retorno"
       ]
     ],
-    "source_id": 25
+    "source_id": 28
   },
   {
     "id": "release_notes",
@@ -838,7 +940,7 @@
       0.23,
       0.77
     ],
-    "source_id": 26
+    "source_id": 29
   },
   {
     "id": "runbook",
@@ -884,14 +986,244 @@
       0.23,
       0.77
     ],
-    "source_id": 27
+    "source_id": 30
+  },
+  {
+    "id": "automation_map",
+    "title": "Da CI ao deploy: o que o workflow precisa conectar",
+    "sub": "Modelo fornecido: laboratório persistente; não é uma conta de produção",
+    "cards": [],
+    "note": "O modelo completo está em workflow-cd-exemplo.yml na pasta do laboratório, fora de .github/workflows. A CI usa um runner temporário; o deploy exige um runner Linux dedicado, persistente e previamente preparado. A imagem é transportada em arquivo tar e seu ID local é conferido; numa arquitetura de registry, usar a referência por digest apropriada. O exemplo usa a release didática v2; no projeto real, adaptar build, testes e identidade ao artefato da aplicação.",
+    "takeaway": "O modelo conecta dois momentos: validar a candidata e mudar um destino que continua existindo.",
+    "kind": "flow",
+    "code": null,
+    "section": "Automação de entrega",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "nodes": [
+      [
+        "Job ci",
+        "Construir e testar\nExportar imagem"
+      ],
+      [
+        "Transferência",
+        "Artefato da execução\nMesmo conteúdo"
+      ],
+      [
+        "Job deploy",
+        "Aguardar regra\nAplicar no destino"
+      ],
+      [
+        "Após o deploy",
+        "Smoke funcional\nRecuperar se falhar"
+      ]
+    ],
+    "source_id": 31
+  },
+  {
+    "id": "workflow_ci",
+    "title": "Workflow 1/2: a CI produz a candidata validada",
+    "sub": "Trecho do arquivo completo • CI verde habilita a próxima etapa",
+    "cards": [
+      [
+        "Construir e testar",
+        "Job ci roda em ubuntu-latest.\nBuild de v2 + smoke integrado.\nFalha bloqueia a entrega."
+      ],
+      [
+        "Transportar",
+        "docker save exporta a imagem.\nArtifact guarda tar + ID.\nDeploy recebe essa candidata."
+      ]
+    ],
+    "note": "Leia o trecho como dependência, não como uma nova aula de GitHub Actions. O arquivo completo inclui checkout, instalação implícita de dependências no Dockerfile, teste em Compose, exportação e upload. O upload ocorre somente se os passos anteriores passaram. O runner temporário não é produção: seu Compose valida a imagem e é encerrado. O arquivo tar serve a um laboratório pequeno; para distribuição regular, registry e políticas de retenção são mais adequados.",
+    "takeaway": "Se a candidata falhar na CI, o job de deploy não deve executar.",
+    "kind": "code",
+    "code": "jobs:\n  ci:\n    runs-on: ubuntu-latest\n    # build + teste + exportação (arquivo completo)\n  deploy:\n    needs: ci\n    runs-on: [self-hosted, linux, x64, e5-laboratorio]\n    environment: e5-laboratorio\n    # baixar a imagem validada e aplicar no destino",
+    "section": "Automação de entrega",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "source_id": 32
+  },
+  {
+    "id": "workflow_deploy",
+    "title": "Workflow 2/2: aplicar e verificar o artefato",
+    "sub": "Trecho do job deploy • imagem baixada do artifact e carregada no Engine",
+    "cards": [
+      [
+        "Destino",
+        "Runner dedicado e persistente.\nProjeto e5-cd-local; porta 18087.\nSem rebuild na promoção."
+      ],
+      [
+        "Pós-deploy",
+        "Conferir imagem, versão e mensagem.\nFalhou? Restaurar referência anterior.\nO job permanece com falha."
+      ]
+    ],
+    "note": "No arquivo completo, docker load carrega candidata.tar e image_id vem de imagem.id. O helper promover.py resolve a imagem local, captura a referência anterior saudável, aplica a candidata e executa verificar.py. Se a candidata falha, tenta recuperar imagem e flag anteriores e testa novamente, mas retorna erro para preservar a evidência da entrega malsucedida. Na primeira implantação não há versão anterior: o script registra essa limitação. Este rollback é específico da demo sem migração de schema.",
+    "takeaway": "Deploy não termina no comando de subida: exige conferir a versão e a operação no destino.",
+    "kind": "code",
+    "code": "docker load --input \"$ARTIFACT_DIR/candidata.tar\"\nimage_id=\"$(cat \"$ARTIFACT_DIR/imagem.id\")\"\npython3 Práticas/encontro-5-entrega/promover.py \\\n  --imagem \"$image_id\" --versao 2.0.0 \\\n  --mensagem \"Bem-vindos à nova experiência!\" \\\n  --projeto e5-cd-local --porta 18087",
+    "section": "Automação de entrega",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "source_id": 33
+  },
+  {
+    "id": "approval_policy",
+    "title": "O que muda entre aprovação e promoção automática?",
+    "sub": "Política do ambiente + destino efetivo • não basta trocar o nome do workflow",
+    "cards": [],
+    "note": "O modelo de laboratório pressupõe configurar o environment e5-laboratorio com revisor obrigatório, se disponível no plano e na visibilidade do repositório. Escrever environment no YAML não cria essa exigência. Remover a revisão torna automática a entrega naquele laboratório; só se chama implantação contínua em produção quando esse é o destino real e os controles estão completos. Neste material nenhum workflow é ativado e nenhum ambiente remoto é provisionado.",
+    "takeaway": "Aprovação manual por versão distingue os fluxos; nomear um ambiente production não cria produção.",
+    "kind": "table",
+    "code": null,
+    "section": "Automação de entrega",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "headers": [
+      "Decisão",
+      "Entrega com aprovação",
+      "Implantação contínua"
+    ],
+    "rows": [
+      [
+        "Após validar",
+        "Aguarda decisão de promover.",
+        "Política libera automaticamente."
+      ],
+      [
+        "No GitHub",
+        "Environment com revisor obrigatório.",
+        "Sem aceite manual por versão."
+      ],
+      [
+        "Controles",
+        "Testes, acesso e smoke permanecem.",
+        "Testes, acesso e smoke permanecem."
+      ],
+      [
+        "Para afirmar produção",
+        "Demonstrar deploy no destino real.",
+        "Demonstrar promoção automática real."
+      ]
+    ],
+    "widths": [
+      0.24,
+      0.38,
+      0.38
+    ],
+    "source_id": 34
+  },
+  {
+    "id": "runner_destination",
+    "title": "Runner é o executor; ambiente é o destino",
+    "sub": "Evitar uma demonstração de CI apresentada como implantação em produção",
+    "cards": [
+      [
+        "Runner temporário",
+        "Hospedado para executar o job.\nCompose ali pode ser teste integrado.\nNão oferece serviço persistente ao usuário."
+      ],
+      [
+        "Destino persistente",
+        "Host ou plataforma identificados.\nAcesso, rede e dados definidos.\nAplicação permanece após o job."
+      ],
+      [
+        "Modelo da aula",
+        "Runner dedicado ao laboratório.\nMesma máquina hospeda o destino local.\nSem credenciais de produção."
+      ]
+    ],
+    "note": "O runner de deploy precisa ter o label e5-laboratorio, Docker/Compose, Python e espaço para o artefato. Use uma máquina isolada, confiável e sem outros serviços críticos; não conecte runner privilegiado a código não confiável ou PRs de forks. A porta 18087 fica apenas no loopback do host dedicado, não no notebook de quem abre o GitHub. A configuração de um runner persistente é um pré-requisito explicado, não uma tarefa obrigatória da turma. O helper também pode ser ensaiado localmente sem GitHub.",
+    "takeaway": "Sempre diga onde os comandos executam, onde a aplicação fica e de onde o teste a acessa.",
+    "kind": "cards",
+    "code": null,
+    "section": "Automação de entrega",
+    "role": "conceito",
+    "question": "",
+    "answer": "",
+    "study_only": false,
+    "source_id": 35
+  },
+  {
+    "id": "automation_check",
+    "title": "Verificação | Distinguir CI, entrega e implantação",
+    "sub": "Depois da explicação • justifique cada resposta",
+    "cards": [
+      [
+        "1. Situação",
+        "O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?"
+      ],
+      [
+        "2. Situação",
+        "A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?"
+      ],
+      [
+        "3. Situação",
+        "O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?"
+      ]
+    ],
+    "note": "Peça uma previsão curta com base no exemplo anterior. Revele o gabarito depois de ouvir duas ou três justificativas. Uma resposta deve indicar o mecanismo e a evidência, não apenas repetir o nome da ferramenta. Retome o diagrama do bloco se houver confusão entre o objeto e a operação.",
+    "takeaway": "O próximo slide traz as três respostas explicadas.",
+    "kind": "cards",
+    "code": null,
+    "section": "Automação de entrega",
+    "role": "pergunta",
+    "question": "O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?\nA pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?\nO smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?",
+    "answer": "",
+    "study_only": false,
+    "questions": [
+      "O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?",
+      "A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?",
+      "O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?"
+    ],
+    "source_id": 36
+  },
+  {
+    "id": "automation_check_resposta",
+    "title": "Respostas comentadas | Distinguir CI, entrega e implantação",
+    "sub": "Gabarito • explique a causa e a consequência",
+    "cards": [
+      [
+        "1. Resposta",
+        "Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente."
+      ],
+      [
+        "2. Resposta",
+        "Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana."
+      ],
+      [
+        "3. Resposta",
+        "Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta."
+      ]
+    ],
+    "note": "Pergunta: O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?\nResposta: Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.\n\nPergunta: A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?\nResposta: Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.\n\nPergunta: O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?\nResposta: Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta.",
+    "takeaway": "Use a justificativa para decidir o próximo teste ou controle.",
+    "kind": "cards",
+    "code": null,
+    "section": "Automação de entrega",
+    "role": "resposta",
+    "question": "",
+    "answer": "Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.\nNão. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.\nNão. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta.",
+    "study_only": false,
+    "answers": [
+      "Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.",
+      "Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.",
+      "Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta."
+    ],
+    "answers_for": "automation_check",
+    "source_id": 37
   },
   {
     "id": "demo_map",
-    "title": "Demonstração: três imagens, um estado persistente",
-    "sub": "Continuação didática da API de visitas do E4",
+    "title": "Ensaio local: deploy, contenção e recuperação",
+    "sub": "Comandos manuais para entender as ações • não é implantação contínua",
     "cards": [],
-    "note": "Os três artefatos usam o mesmo código de servidor e metadados de release diferentes para tornar o defeito reproduzível e isolado. A falha é intencional no conteúdo da mensagem, não uma vulnerabilidade real. O banco mantém o contador em um volume do projeto E5, separado de E4. O objetivo é observar que sucesso do processo e do healthcheck não implica correção da funcionalidade. Este ensaio local não implementa canary, blue-green ou um deploy em nuvem.",
+    "note": "Os três artefatos usam o mesmo código de servidor e metadados de release diferentes para tornar o defeito reproduzível e isolado. A falha é intencional no conteúdo da mensagem, não uma vulnerabilidade real. O banco mantém o contador em um volume do projeto E5, separado de E4. O objetivo é observar que sucesso do processo e do healthcheck não implica correção da funcionalidade. Este ensaio local não implementa canary, blue-green ou um deploy em nuvem. Esta sequência manual ensina as ações depois automatizadas pelo helper; não deve ser chamada de implantação contínua. O modelo de workflow mostra onde conectar CI, aprovação e deploy.",
     "takeaway": "Mude apenas app; observe versão, comportamento e dados antes e depois.",
     "kind": "flow",
     "code": null,
@@ -914,7 +1246,7 @@
         "Mensagem corrigida\nMesmo schema"
       ]
     ],
-    "source_id": 28
+    "source_id": 38
   },
   {
     "id": "demo_build",
@@ -939,7 +1271,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 29
+    "source_id": 39
   },
   {
     "id": "demo_baseline",
@@ -964,7 +1296,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 30
+    "source_id": 40
   },
   {
     "id": "demo_bad",
@@ -989,7 +1321,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 31
+    "source_id": 41
   },
   {
     "id": "demo_contain",
@@ -1014,7 +1346,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 32
+    "source_id": 42
   },
   {
     "id": "demo_rollback",
@@ -1039,7 +1371,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 33
+    "source_id": 43
   },
   {
     "id": "demo_fixed",
@@ -1064,7 +1396,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 34
+    "source_id": 44
   },
   {
     "id": "demo_evidence",
@@ -1117,7 +1449,7 @@
       0.22,
       0.43
     ],
-    "source_id": 35
+    "source_id": 45
   },
   {
     "id": "recovery",
@@ -1151,7 +1483,7 @@
       "Desligar a flag no artefato ruim é o mesmo que fazer rollback para v1?",
       "Se a release removeu uma coluna necessária à v1, voltar a imagem basta?"
     ],
-    "source_id": 36
+    "source_id": 46
   },
   {
     "id": "recovery_resposta",
@@ -1186,7 +1518,7 @@
       "Não. A versão antiga pode ser incompatível com o schema atual. Planeje compatibilidade e recuperação dos dados."
     ],
     "answers_for": "recovery",
-    "source_id": 37
+    "source_id": 47
   },
   {
     "id": "devsecops",
@@ -1220,7 +1552,7 @@
         "Sinais e resposta\nCorreções contínuas"
       ]
     ],
-    "source_id": 38
+    "source_id": 48
   },
   {
     "id": "scans",
@@ -1273,7 +1605,7 @@
       0.4,
       0.42
     ],
-    "source_id": 39
+    "source_id": 49
   },
   {
     "id": "risk",
@@ -1319,7 +1651,7 @@
       0.28,
       0.72
     ],
-    "source_id": 40
+    "source_id": 50
   },
   {
     "id": "fix",
@@ -1348,7 +1680,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 41
+    "source_id": 51
   },
   {
     "id": "pipeline_security",
@@ -1377,7 +1709,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 42
+    "source_id": 52
   },
   {
     "id": "governance",
@@ -1406,7 +1738,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 43
+    "source_id": 53
   },
   {
     "id": "injection",
@@ -1440,7 +1772,7 @@
         "Recusar a instrução\nAnalisar o erro real"
       ]
     ],
-    "source_id": 44
+    "source_id": 54
   },
   {
     "id": "agents",
@@ -1469,7 +1801,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 45
+    "source_id": 55
   },
   {
     "id": "ai_record",
@@ -1515,7 +1847,7 @@
       0.23,
       0.77
     ],
-    "source_id": 46
+    "source_id": 56
   },
   {
     "id": "security",
@@ -1549,7 +1881,7 @@
       "Um log pede à IA que envie um token: isso autoriza a ação?",
       "Um patch gerado remove o teste que falhava. Pipeline verde prova a correção?"
     ],
-    "source_id": 47
+    "source_id": 57
   },
   {
     "id": "security_resposta",
@@ -1584,14 +1916,14 @@
       "Não. Remover a evidência pode esconder o defeito. Revise o diff e comprove o comportamento esperado."
     ],
     "answers_for": "security",
-    "source_id": 48
+    "source_id": 58
   },
   {
     "id": "project_bridge",
     "title": "Aplicar o E5 ao mesmo projeto integrador",
     "sub": "A entrega continua a ser da equipe",
     "cards": [],
-    "note": "A API do professor não deve substituir a aplicação escolhida. Peça que cada equipe identifique uma mudança pequena, um artefato ou versão e um destino de ensaio. O requisito do encontro é um plano de release acionável, rollback e checklist, com evidências disponíveis no repositório. Uma execução local é suficiente para demonstrar o mecanismo sem criar obrigação de nuvem. Entrega e operação continuam correspondendo a 15% da rubrica homologada; não altere os demais pesos.",
+    "note": "A API do professor não deve substituir a aplicação escolhida. Peça que cada equipe identifique uma mudança pequena, um artefato ou versão e um destino de ensaio. O requisito do encontro é um plano de release acionável, rollback e checklist, com evidências disponíveis no repositório. Uma execução local é suficiente para demonstrar o mecanismo sem criar obrigação de nuvem. Entrega e operação continuam correspondendo a 15% da rubrica homologada; não altere os demais pesos. A equipe identifica o limite atual de sua automação, sem chamar CI de implantação contínua.",
     "takeaway": "E5 alimenta os 15% de Entrega e Operação; os outros critérios e a avaliação de grupo permanecem.",
     "kind": "flow",
     "code": null,
@@ -1614,7 +1946,7 @@
         "Observar e diagnosticar\nDemonstrar evidências"
       ]
     ],
-    "source_id": 49
+    "source_id": 59
   },
   {
     "id": "lab",
@@ -1634,7 +1966,7 @@
         "Conferir rollback e dados.\nRevisar segurança e IA.\nGuardar resultados e pendências no repositório."
       ]
     ],
-    "note": "Oriente o trabalho pelo projeto real. Se o grupo ainda não consegue executar uma troca, priorize um plano preciso, indique a limitação e registre o que foi apenas planejado. Não declare rollback testado sem ensaio. Enquanto uma pessoa opera, outras revisam critério, diff e registro; alternem funções sem formalizar notas individuais. Os templates trazem exemplo preenchido para evitar campos vagos. A aplicação pode ser outra linguagem: imagem e script de validação devem ser adaptados à stack.",
+    "note": "Oriente o trabalho pelo projeto real. Se o grupo ainda não consegue executar uma troca, priorize um plano preciso, indique a limitação e registre o que foi apenas planejado. Não declare rollback testado sem ensaio. Enquanto uma pessoa opera, outras revisam critério, diff e registro; alternem funções sem formalizar notas individuais. Os templates trazem exemplo preenchido para evitar campos vagos. A aplicação pode ser outra linguagem: imagem e script de validação devem ser adaptados à stack. O plano deve classificar explicitamente CI, entrega com aprovação ou implantação automática; identificar gatilho, artefato, executor, destino e teste após o deploy. O helper é opção de ensaio local, não nova obrigação de configurar um runner remoto.",
     "takeaway": "Planejado, executado e validado precisam ficar claramente distintos nas evidências.",
     "kind": "cards",
     "code": null,
@@ -1643,7 +1975,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 50
+    "source_id": 60
   },
   {
     "id": "acceptance",
@@ -1670,7 +2002,7 @@
       ],
       [
         "Plano de promoção",
-        "Destino, pré-requisitos, comandos e critérios de passagem."
+        "Destino, gatilho, artefato, aprovação/política, comandos e teste pós-deploy."
       ],
       [
         "Plano de recuperação",
@@ -1689,7 +2021,7 @@
       0.27,
       0.73
     ],
-    "source_id": 51
+    "source_id": 61
   },
   {
     "id": "final",
@@ -1723,7 +2055,7 @@
       "A versão anterior existe, mas não lê o novo schema: acionar rollback direto?",
       "O plano diz “voltar se der problema”, sem teste ou comando: está acionável?"
     ],
-    "source_id": 52
+    "source_id": 62
   },
   {
     "id": "final_resposta",
@@ -1758,7 +2090,7 @@
       "Não. Defina gatilho observável, responsável, referência anterior, passos e confirmação do resultado."
     ],
     "answers_for": "final",
-    "source_id": 53
+    "source_id": 63
   },
   {
     "id": "next",
@@ -1787,7 +2119,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 54
+    "source_id": 64
   },
   {
     "id": "references",
@@ -1816,7 +2148,7 @@
     "question": "",
     "answer": "",
     "study_only": false,
-    "source_id": 55
+    "source_id": 65
   },
   {
     "id": "github_env",
@@ -1845,7 +2177,7 @@
     "question": "",
     "answer": "",
     "study_only": true,
-    "source_id": 56
+    "source_id": 66
   },
   {
     "id": "oidc",
@@ -1874,7 +2206,7 @@
     "question": "",
     "answer": "",
     "study_only": true,
-    "source_id": 57
+    "source_id": 67
   },
   {
     "id": "supply_chain",
@@ -1903,7 +2235,7 @@
     "question": "",
     "answer": "",
     "study_only": true,
-    "source_id": 58
+    "source_id": 68
   },
   {
     "id": "rollout_policy",
@@ -1949,7 +2281,7 @@
       0.26,
       0.74
     ],
-    "source_id": 59
+    "source_id": 69
   },
   {
     "id": "terraform_plan",
@@ -1978,6 +2310,6 @@
     "question": "",
     "answer": "",
     "study_only": true,
-    "source_id": 60
+    "source_id": 70
   }
 ]

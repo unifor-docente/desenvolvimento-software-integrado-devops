@@ -1,60 +1,56 @@
 # Encontro 5 — roteiro de condução em quatro horas
 
-**25/09/2026 • revisão em 23/09.** A trilha tem 55 slides; outros 5 ficam para consulta. Use os rodapés E5·NN. A capa institucional é a primeira página; os fundamentos vêm antes do primeiro checkpoint.
-
-## Distribuição do tempo
+**25/09/2026 • revisão de CI/CD.** 65 slides na trilha principal e 5 de consulta. Rodapés E5·NN; página do PDF independente = NN + 1. A capa mantém a identidade da disciplina.
 
 | Minutos | Slides E5 | Condução |
 |---|---|---|
-| 0–10 | 01–02 | Retomar o ambiente executável do E4 e explicar o objetivo de controlar mudanças. |
-| 10–35 | 03–10 | Definir vocabulário, CI/CD, identidade, ambientes e critérios; primeira verificação. |
-| 35–60 | 11–18 | Separar artefato/configuração/estado; segredos, caso de exposição, IaC e GitOps; gabarito. |
-| 60–90 | 19–27 | Comparar estratégias; explicar flag, rollback, schema, release notes e runbook com exemplos. |
+| 0–10 | 01–02 | Resultado: controlar a entrega ao destino; retomar o E4. |
+| 10–40 | 03–13 | Vocabulário; comparar CI, Delivery e Deployment; artefato e gates; gabarito. |
+| 40–60 | 14–21 | Configuração, segredos, IaC/GitOps como panoramas; gabarito. |
+| 60–90 | 22–37 | Estratégias e recuperação; ler a automação, destino e aprovação; gabarito. |
 | 90–105 | — | Intervalo de 15 minutos. |
-| 105–140 | 28–37 | Demonstração preparada: referência → defeito → contenção → rollback → correção. Verificação de recuperação. |
-| 140–165 | 38–48 | Segurança e IA: interpretar um achado, permissões, prompt injection, registro e gabarito. |
-| 165–235 | 49–53 | 70 minutos no próprio projeto. Orientações no início; plano, ensaio quando possível e evidências. Verificação final durante a revisão das equipes. |
-| 235–240 | 54–55 | Conectar os registros de entrega à observabilidade e apresentação do E6. |
+| 105–140 | 38–47 | Ensaio local: referência, defeito, contenção, rollback e correção. Relacionar as ações com promover.py; gabarito. |
+| 140–165 | 48–58 | Segurança e IA: aprofundar um caso, explicar responsabilidades e gabarito. |
+| 165–235 | 59–63 | 70 minutos no projeto; orientação e verificação dentro da atividade. |
+| 235–240 | 64–65 | Evidências e ligação com observabilidade. |
 
-Total: 240 minutos, com 15 de intervalo e 70 de prática. As respostas são explicadas dentro do tempo de cada bloco, sem criar uma segunda aula de exercícios.
+Total: 240 minutos. Os dez slides novos substituem explicações genéricas por fluxos e exemplos; não acrescentam outro laboratório obrigatório. No bloco 60–90, reserve aproximadamente 12 min para estratégias/recuperação e 18 para automação e verificação. Trate as tabelas como apoio, sem ler cada célula. Preserve a demonstração, os gabaritos e a prática das equipes.
 
-## Antes da aula
+## A mensagem que precisa ficar clara
 
-Ensaiar o README e baixar as imagens. Construir as três versões antes de apresentar; o slide de build explica a preparação, não precisa consumir o tempo da demo. Conferir porta, nome do projeto e Python 3. Deixar os arquivos e templates abertos. Usar dados fictícios e os serviços exclusivos do E5.
+“CI valida a mudança. Entrega contínua mantém a capacidade de implantar quando decidido; o deploy pode ser automatizado após aprovação. Implantação contínua leva as mudanças que passam nos critérios à produção sem aprovação manual por versão.”
 
-## Como explicar os pontos centrais
+Compare E5·05–07 apontando a intervenção humana. Em E5·31–35, siga o artefato da CI até o destino. Nome de job, pipeline verde ou environment chamado production não comprova uma aplicação implantada para usuários.
 
-**CI/CD:** “O CI testou a integração de código. Agora precisamos identificar o artefato, aplicar no destino e verificar a operação. Um verde não substitui o outro.”
+## Como explicar o exemplo de workflow
 
-**Artefato:** “A tag dá um nome. A evidência precisa apontar para o conteúdo que foi testado. Construir de novo pode mudar esse conteúdo, mesmo com o mesmo nome.”
+Abra `Práticas/encontro-5-entrega/workflow-cd-exemplo.yml` junto de `AUTOMACAO-CD.md`. Explique:
 
-**Configuração:** “A imagem é a mesma, mas a flag muda o caminho. Como nossa API lê a variável na partida, reaplicamos a configuração para observar a mudança.”
+1. CI constrói a imagem da candidata e testa a operação num runner temporário.
+2. A mesma imagem é exportada; o deploy não faz outro build.
+3. `needs: ci` exige o sucesso da etapa anterior.
+4. A aprovação depende da regra configurada no environment; não é criada por seu nome no YAML.
+5. Um runner dedicado aplica a imagem no laboratório persistente; o temporário da CI não é esse destino.
+6. O helper testa após o deploy; se falhar, tenta recuperar a referência anterior e mantém o job como falha.
 
-**Deploy e release:** “O código pode estar instalado com a função desligada. Instalar e disponibilizar são decisões separáveis.”
+O arquivo é um modelo fora da pasta de workflows ativos. Não configurar runners ou contas reais durante a exposição. Com revisor no environment, ilustra entrega com aprovação; sem revisor, automatiza a implantação naquele laboratório. Nenhuma das duas situações deve ser apresentada como produção real.
 
-**Recuperação:** “Desligar a flag contém. Voltar à v1 restaura uma imagem conhecida. Promover a v2 corrigida resolve adiante. Nenhuma dessas ações apaga automaticamente efeitos no banco.”
+## Antes da demonstração
 
-**Saúde:** “O check diz que uma consulta básica funcionou. Não diz que a saudação está correta. Vamos comparar conteúdo esperado e observado.”
+Ensaiar o README, construir as três imagens e conferir portas. Deixar comandos e templates abertos. A prática manual usa 18085 e `unifor-encontro5`; o helper usa 18087 e `e5-cd-local`. São destinos de laboratório distintos, com volumes próprios. Não compare os contadores como se fossem o mesmo banco.
 
-**Segurança:** “Que risco esta análise procura? O que ficou fora? O que faremos com o achado? A resposta deve incluir uma evidência, não só um nome de scanner.”
+## Como conectar o ensaio manual à automação
 
-**IA:** “Uma sugestão é uma hipótese. O log pode conter uma ordem de terceiros, mas essa ordem não recebeu autoridade da equipe. Vamos controlar ações e verificar o efeito.”
+A sequência E5·38–47 permite explicar cada ação isoladamente. Diga: “Estou executando manualmente para vocês verem cada decisão; isso ainda não é implantação contínua.” Depois aponte em promover.py onde aplicar, verificar e recuperar foram automatizados. Se o helper já foi ensaiado, mostre seu resultado ou faça uma passagem curta; não repita duas demonstrações completas.
 
-## Ritmo e adaptação
+A versão defeituosa é promovida deliberadamente para ensinar o caso de um problema que escapou aos controles anteriores. No workflow fornecido, o smoke da CI deveria bloquear esse defeito conhecido. São cenários didáticos diferentes: gate antes da promoção e verificação no destino após a promoção. Não ensine a ignorar uma CI vermelha para reproduzir a falha.
 
-O bloco de segurança é denso. Mostre as categorias e aprofunde um caso: token no log ou correção que apaga o teste. Deixe perguntas específicas de ferramentas para consulta. Preserve a execução da falha funcional, a comparação contenção/rollback e o trabalho das equipes.
+## Trabalho das equipes
 
-Não trate os cinco checkpoints como prova individual. Ouça justificativas breves, revele o gabarito e retome uma figura se necessário. Na prática, os mesmos integrantes desenvolvem o mesmo projeto; não há nova nota individual nem mudança de pesos.
+O plano deve identificar evento, imagem/artefato, executor, destino, aprovação ou política, teste pós-deploy e recuperação. Cada equipe classifica o que tem hoje: CI, ensaio manual, passos automatizados ou fluxo de entrega conectado. Não exigir implantação pública ou um runner remoto novo. O projeto continua o mesmo, com 15% de Entrega e Operação e avaliação em grupo.
 
-A entrega formal continua sendo o plano de release, recuperação e checklist com evidências no repositório. Se não houver ensaio executável, documente pré-requisitos e limitações; não marque como testado. Um deploy público ou assinatura de ferramenta paga não é requisito.
+Nos 70 minutos: 0–20 preparar a mudança e critérios; 20–45 ensaiar se o ambiente permitir; 45–70 registrar resultados e revisar as perguntas finais. Quando só houver plano, escrever planejado; quando houver execução, anexar evidência real.
 
 ## Consulta
 
-E5·56–60: ambientes protegidos no GitHub, OIDC, SBOM/proveniência/assinatura, política de canary e leitura de plano Terraform. São extensões conceituais, sem novas exigências.
-
-## Navegação
-
-- [Guia por slide](Guia%20ampliado%20do%20professor.md)
-- [Questões e gabaritos](Índice%20de%20perguntas%20e%20respostas.md)
-- [Laboratório executável](../../Práticas/encontro-5-entrega/README.md)
-- [Modelo preenchido](../../Práticas/encontro-5-entrega/EXEMPLO-PREENCHIDO.md)
+E5·66–70: ambientes protegidos, OIDC, SBOM/proveniência/assinatura, política de canary e plano Terraform. Usar conforme dúvidas, fora da trilha obrigatória.

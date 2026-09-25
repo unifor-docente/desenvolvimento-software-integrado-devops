@@ -1,4 +1,4 @@
-"""Gera o encontro 4 na ordem didática de conteudo_e5.py e atualiza somente sua seção.
+"""Gera o encontro 5 na ordem didática de conteudo_e5.py e atualiza somente sua seção.
 Requer python-pptx e python-docx. Execute a partir de qualquer diretório.
 """
 from pathlib import Path
@@ -153,9 +153,10 @@ def add_cover(p,reference):
   for par in sh.text_frame.paragraphs:
    for run in par.runs:
     value=run.text
+    if 'CD, configuração, segurança e governança de IA' in value:value=value.replace('CD, configuração, segurança e governança de IA','Entrega contínua, implantação e IA')
     if value.strip().isdigit():value='E5'
     run.text=value
- sl.notes_slide.notes_text_frame.text='Capa do Encontro 5 — 25/09/2026. CD, configuração, segurança e governança de IA. Avance para o conteúdo E5·01; as referências E5·NN permanecem válidas.'
+ sl.notes_slide.notes_text_frame.text='Capa do Encontro 5 — 25/09/2026. Entrega contínua e implantação. Avance para o conteúdo E5·01; as referências E5·NN permanecem válidas.'
  return sl
 
 def export_encontro(main,target):
@@ -185,7 +186,7 @@ if __name__=='__main__':
  main=ROOT/'Slides/Desenvolvimento de Software Integrado - DevOps - Slides.pptx'
  interval=replace_section(main,S)
  export_encontro(main,OUT/'Encontro 5 - Entrega e Governança.pptx')
- chosen={'percurso','agenda','vocab','cicd','pipeline','artifact','gates','base','base_resposta','config','compose_config','secrets','leak','iac','gitops','configuration','configuration_resposta','strategies','flags','rollback','migration','release_notes','runbook','demo_map','demo_build','demo_baseline','demo_bad','demo_contain','demo_rollback','demo_fixed','demo_evidence','recovery','recovery_resposta','devsecops','scans','risk','fix','pipeline_security','governance','injection','agents','ai_record','security','security_resposta','project_bridge','lab','acceptance','final','final_resposta','next'}
+ chosen={'ci_boundary','delivery_flow','deployment_flow','automation_map','workflow_ci','workflow_deploy','approval_policy','runner_destination','automation_check','automation_check_resposta','percurso','agenda','vocab','cicd','pipeline','artifact','gates','base','base_resposta','config','compose_config','secrets','leak','iac','gitops','configuration','configuration_resposta','strategies','flags','rollback','migration','release_notes','runbook','demo_map','demo_build','demo_baseline','demo_bad','demo_contain','demo_rollback','demo_fixed','demo_evidence','recovery','recovery_resposta','devsecops','scans','risk','fix','pipeline_security','governance','injection','agents','ai_record','security','security_resposta','project_bridge','lab','acceptance','final','final_resposta','next'}
  replace_section(ROOT/'Slides/Desenvolvimento de Software Integrado - DevOps - Guia de Aula.pptx',[d for d in S if d['id'] in chosen])
  path=ROOT/'Slides/Desenvolvimento de Software Integrado - DevOps - Guia de Aula.docx';doc=Document(path);body=doc._element.body
  begin=next(p for p in doc.paragraphs if p.text.startswith('Parte 7 — Encontro 5'))
@@ -198,9 +199,9 @@ if __name__=='__main__':
    pp.style=next(ss for ss in doc.styles if ss.name==style);pp.paragraph_format.keep_with_next=True
    for run in pp.runs:run.font.bold=True;run.font.size=DPt(18 if style=='Heading 1' else 13)
   return pp
- intro=f'{len(S)} slides de conteúdo + capa institucional • 25/09/2026 • 4h presenciais. No conjunto principal: posições {interval[0]}–{interval[1]}. Revisão: 23/09/2026.'
- usage='Sequência: explicar os fundamentos → demonstrar → verificar com gabarito → recuperar → revisar segurança e IA → aplicar ao projeto. As verificações aparecem depois das explicações. Os recursos avançados estão identificados como consulta. Preservar 70 minutos de trabalho das equipes. O exemplo da API não substitui o projeto escolhido. Notas do apresentador e o roteiro de quatro horas apoiam a condução.'
- insert_para('Parte 7 — Encontro 5: CD, Configuração, Segurança e Governança de IA','Heading 1')
+ intro=f'{len(S)} slides de conteúdo + capa institucional • 25/09/2026 • 4h presenciais. No conjunto principal: posições {interval[0]}–{interval[1]}. Revisão: 25/09/2026.'
+ usage='Sequência: distinguir CI, Continuous Delivery e Continuous Deployment → explicar configuração e estratégias → ler o modelo de workflow → ensaiar deploy e recuperação local → revisar segurança e IA → aplicar ao projeto. As verificações aparecem depois das explicações. Os recursos avançados estão identificados como consulta. Preservar 70 minutos de trabalho das equipes. O exemplo da API não substitui o projeto escolhido. Notas do apresentador e o roteiro de quatro horas apoiam a condução.'
+ insert_para('Parte 7 — Encontro 5: Entrega Contínua, Implantação, Segurança e Governança de IA','Heading 1')
  insert_para(intro);insert_para(usage)
  md=['# Encontro 5 — Guia ampliado do professor','',intro,'',usage,'']
  for d in S:
@@ -239,7 +240,7 @@ if __name__=='__main__':
  md+=['## Referências','']+[f'- [{t}]({u})' for t,u in REFS]
  (OUT/'Guia ampliado do professor.md').write_text('\n'.join(md)+'\n')
  (OUT/'conteudo.json').write_text(json.dumps(S,ensure_ascii=False,indent=2)+'\n')
- idx=['# Verificações e respostas comentadas','','As cinco verificações aparecem depois da explicação e da demonstração de seus blocos. Cada uma tem três situações, seguidas de um slide com respostas explicadas. Os casos resolvidos mostram decisões de promoção, contenção, rollback e segurança.','','Use o rodapé E5·NN. A página no PDF independente corresponde ao número + 1, devido à capa.','','| Questões | Gabarito | Bloco |','|---|---|---|']
+ idx=['# Verificações e respostas comentadas','','As seis verificações aparecem depois da explicação e da demonstração de seus blocos. Cada uma tem três situações, seguidas de um slide com respostas explicadas. Os casos resolvidos mostram decisões de promoção, contenção, rollback e segurança.','','Use o rodapé E5·NN. A página no PDF independente corresponde ao número + 1, devido à capa.','','| Questões | Gabarito | Bloco |','|---|---|---|']
  for d in S:
   if d['role']=='resposta':
    q=next(x for x in S if x['id']==d['answers_for'])
@@ -249,5 +250,5 @@ if __name__=='__main__':
    q=next(x for x in S if x['id']==d['answers_for']);idx+=['','## '+q['title'],'']
    for question,answer in zip(q['questions'],d['answers']):idx+=['**Pergunta:** '+question,'','**Resposta explicada:** '+answer,'']
  idx+=['## Atividade no projeto','','A equipe adapta release notes, plano de recuperação e checklist ao próprio projeto. Os exemplos preenchidos estão na pasta Práticas/encontro-5-entrega. Distinguir sempre o que foi planejado, executado e validado.']
- (OUT/'Índice de perguntas e respostas.md').write_text('\n'.join(idx)+'\n')
+ (OUT/'Índice de perguntas e respostas.md').write_text(('\n'.join(idx)+'\n').replace('| Verificação |','| Verificação —'))
  print(f'{len(S)} slides E5 + capa; intervalo principal {interval}; guias atualizados.')

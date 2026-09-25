@@ -1,16 +1,16 @@
 # Encontro 5 — Guia ampliado do professor
 
-60 slides de conteúdo + capa institucional • 25/09/2026 • 4h presenciais. No conjunto principal: posições 186–246. Revisão: 23/09/2026.
+70 slides de conteúdo + capa institucional • 25/09/2026 • 4h presenciais. No conjunto principal: posições 186–256. Revisão: 25/09/2026.
 
-Sequência: explicar os fundamentos → demonstrar → verificar com gabarito → recuperar → revisar segurança e IA → aplicar ao projeto. As verificações aparecem depois das explicações. Os recursos avançados estão identificados como consulta. Preservar 70 minutos de trabalho das equipes. O exemplo da API não substitui o projeto escolhido. Notas do apresentador e o roteiro de quatro horas apoiam a condução.
+Sequência: distinguir CI, Continuous Delivery e Continuous Deployment → explicar configuração e estratégias → ler o modelo de workflow → ensaiar deploy e recuperação local → revisar segurança e IA → aplicar ao projeto. As verificações aparecem depois das explicações. Os recursos avançados estão identificados como consulta. Preservar 70 minutos de trabalho das equipes. O exemplo da API não substitui o projeto escolhido. Notas do apresentador e o roteiro de quatro horas apoiam a condução.
 
-## E5.01 — Do ambiente executável à entrega controlada
+## E5.01 — Entrega contínua e implantação: do artefato ao destino
 
-Encontro 5 • a aplicação do projeto continua a mesma
+E5 • Continuous Delivery e Continuous Deployment, com papéis distintos
 
 **Base do E4:** Imagem e Compose funcionando. Dependências integradas. Uma falha diagnosticada.
 
-**Avanço do E5:** Identificar a versão entregue. Controlar configuração e liberação. Preparar recuperação e segurança.
+**Avanço do E5:** Distinguir entrega e implantação. Automatizar passos de promoção. Validar e recuperar no destino.
 
 **Evidência final:** Release notes preenchidas. Rollback acionável. Checklist e decisões de IA registradas.
 
@@ -22,11 +22,11 @@ Encontro 5 • a aplicação do projeto continua a mesma
 
 Conceitos, demonstração e 70 minutos no projeto
 
-**0–60 min | Base:** 0–10: contexto e objetivo. 10–35: CI/CD e promoção. 35–60: configuração, segredos e IaC.
+**0–60 min | Base:** 0–10: objetivo. 10–40: CI, Delivery e Deployment. 40–60: configuração e acesso.
 
-**60–165 min | Controle:** 60–90: deploy e recuperação. 90–105: intervalo. 105–140: demo guiada. 140–165: segurança e IA.
+**60–165 min | Entrega:** 60–90: estratégias e automação. 90–105: intervalo. 105–140: ensaio local guiado. 140–165: segurança e IA.
 
-**165–240 min | Projeto:** 165–235: trabalho das equipes. 235–240: fechamento. Consultas disponíveis após a trilha.
+**165–240 min | Projeto:** 165–235: plano e ensaio da equipe. 235–240: síntese. Consulta conforme a necessidade.
 
 **Como explicar:** Os 240 minutos incluem intervalo de 15 e prática de 70. Ensaiar e baixar imagens antes evita consumir o laboratório com downloads. As tabelas são referências para explicação, não comandos que todos precisam executar em sequência. Faça as verificações no tempo do próprio bloco. O projeto precisa de um plano acionável; um ensaio local acrescenta evidência, mas não transforma a entrega em obrigação de hospedar em produção.
 
@@ -61,7 +61,55 @@ A sigla CD pode representar duas práticas
 
 **Conclusão prática:** Automatizar a execução e definir quem decide a promoção são escolhas relacionadas, mas distintas.
 
-## E5.05 — O caminho de uma mudança até o usuário
+## E5.05 — CI: validar a mudança antes da entrega
+
+Retomada do E3 • ainda não há implantação no ambiente dos usuários
+
+**Mudança:** Commit / PR Código revisado
+
+**Verificações:** Build e testes Resultado por commit
+
+**Artefato:** Imagem candidata Conteúdo identificado
+
+**Limite da CI:** Validação concluída Destino ainda não mudou
+
+**Como explicar:** CI combina integração frequente com verificações automatizadas. Um build verde não prova implantação. O teste pode iniciar containers temporários no runner e continuar sendo apenas validação da candidata. Pergunte de onde o usuário está acessando: se o serviço só existiu durante o job de teste, não houve uma entrega persistente para ele.
+
+**Conclusão prática:** CI fornece evidência sobre a mudança; CD acrescenta o caminho de implantação e validação no destino.
+
+## E5.06 — Continuous Delivery: pronta para implantar
+
+Entrega contínua • exemplo com decisão humana antes da produção
+
+**Candidata:** CI e artefato Validados
+
+**Homologação:** Implantar e testar Automático
+
+**Aprovação:** Decidir a promoção Intervenção humana
+
+**Produção:** Deploy + smoke Passos automatizados
+
+**Como explicar:** A entrega contínua mantém o software em condição de ser implantado de modo confiável quando decidido. Neste exemplo, a automação executa o deploy após uma aprovação. A pessoa decide se e quando promover; não precisa digitar cada comando. A aprovação não é obrigatória em todo ambiente de uma prática de entrega contínua: ela marca a diferença no fluxo comparado aqui. Release notes sem capacidade de execução não demonstram sozinhas essa prática.
+
+**Conclusão prática:** Entrega contínua: a versão está pronta; a decisão de promover para produção pode ser humana.
+
+## E5.07 — Continuous Deployment: implantar automaticamente
+
+Implantação contínua • comparação usando o mesmo artefato e destino
+
+**Candidata:** CI e artefato Validados
+
+**Homologação:** Implantar e testar Automático
+
+**Política:** Critérios automáticos Sem aceite por versão
+
+**Produção:** Deploy + smoke Observar e reagir
+
+**Como explicar:** Na implantação contínua, as mudanças que satisfazem os critérios chegam automaticamente à produção, sem aprovação manual por versão nessa passagem. Isso não elimina revisão de código, testes, limites de acesso ou resposta a incidentes. Uma flag pode manter uma capacidade desligada apesar do deploy. Automatizar somente a homologação não comprova implantação contínua em produção. Compare as duas figuras apontando exatamente o lugar onde a decisão difere.
+
+**Conclusão prática:** Implantação contínua: a política promove para produção; automatizar apenas testes continua sendo CI.
+
+## E5.08 — O caminho de uma mudança até o usuário
 
 Uma falha num gate interrompe a promoção
 
@@ -77,7 +125,7 @@ Uma falha num gate interrompe a promoção
 
 **Conclusão prática:** O resultado esperado é saber qual versão foi promovida e por que ela foi aceita.
 
-## E5.06 — Construir uma vez e promover o mesmo artefato
+## E5.09 — Construir uma vez e promover o mesmo artefato
 
 Reconstruir em cada ambiente pode gerar conteúdo diferente
 
@@ -91,7 +139,7 @@ Reconstruir em cada ambiente pode gerar conteúdo diferente
 
 **Conclusão prática:** Mesma tag não prova mesmo conteúdo; registre a identidade do artefato que passou pelos testes.
 
-## E5.07 — Ambientes: propósito, configuração e dados
+## E5.10 — Ambientes: propósito, configuração e dados
 
 Desenvolvimento, homologação e produção não são apenas nomes
 
@@ -105,7 +153,7 @@ Desenvolvimento, homologação e produção não são apenas nomes
 
 **Conclusão prática:** Antes de um comando de entrega, confira o destino, a versão, a configuração e os dados afetados.
 
-## E5.08 — Critérios de promoção: tornar a decisão verificável
+## E5.11 — Critérios de promoção: tornar a decisão verificável
 
 Smoke = teste curto das funções essenciais • exemplo de critérios para uma release
 
@@ -121,7 +169,7 @@ Smoke = teste curto das funções essenciais • exemplo de critérios para uma 
 
 **Conclusão prática:** Uma aprovação deve apontar para evidências; “parece funcionar” não é um critério reproduzível.
 
-## E5.09 — Verificação | Fluxo e identidade
+## E5.12 — Verificação | Fluxo e identidade
 
 Depois da explicação • justifique cada resposta
 
@@ -135,7 +183,7 @@ Depois da explicação • justifique cada resposta
 
 **Conclusão prática:** O próximo slide traz as três respostas explicadas.
 
-## E5.10 — Respostas comentadas | Fluxo e identidade
+## E5.13 — Respostas comentadas | Fluxo e identidade
 
 Gabarito • explique a causa e a consequência
 
@@ -156,7 +204,7 @@ Resposta: Não necessariamente. O código está instalado, mas a flag ainda cont
 
 **Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
 
-## E5.11 — Configuração: separar o artefato de seu ambiente
+## E5.14 — Configuração: separar o artefato de seu ambiente
 
 Porta, endereço de serviço, timeout e flag são decisões de execução
 
@@ -170,7 +218,7 @@ Porta, endereço de serviço, timeout e flag são decisões de execução
 
 **Conclusão prática:** Artefato + configuração + estado determinam o comportamento; voltar só a imagem pode não bastar.
 
-## E5.12 — Exemplo: selecionar a imagem e a flag no Compose
+## E5.15 — Exemplo: selecionar a imagem e a flag no Compose
 
 Trecho do laboratório • arquivo completo disponível na pasta de prática
 
@@ -192,7 +240,7 @@ services:
 
 **Conclusão prática:** Mudar uma variável no shell exige aplicar a configuração para alterar a instância.
 
-## E5.13 — Segredo é configuração que exige proteção adicional
+## E5.16 — Segredo é configuração que exige proteção adicional
 
 Exemplos: senha do banco, token de publicação e chave privada
 
@@ -206,7 +254,7 @@ Exemplos: senha do banco, token de publicação e chave privada
 
 **Conclusão prática:** Separar do código é o início; acesso, rotação e exposição durante o uso também precisam de controle.
 
-## E5.14 — Caso resolvido: um token apareceu no log
+## E5.17 — Caso resolvido: um token apareceu no log
 
 Apagar uma linha não invalida uma credencial já exposta
 
@@ -220,7 +268,7 @@ Apagar uma linha não invalida uma credencial já exposta
 
 **Conclusão prática:** Uma credencial exposta precisa de resposta sobre o acesso, além da correção do código que a imprimiu.
 
-## E5.15 — Infraestrutura como código: declarar e revisar
+## E5.18 — Infraestrutura como código: declarar e revisar
 
 Exemplo conceitual • Terraform não é laboratório obrigatório
 
@@ -236,7 +284,7 @@ Exemplo conceitual • Terraform não é laboratório obrigatório
 
 **Conclusão prática:** Arquivo gerado não é infraestrutura validada; plano, revisão e verificação continuam necessários.
 
-## E5.16 — GitOps: comparar o desejado com o estado real
+## E5.19 — GitOps: comparar o desejado com o estado real
 
 Há reconciliação contínua, além de versionar arquivos
 
@@ -250,7 +298,7 @@ Há reconciliação contínua, além de versionar arquivos
 
 **Conclusão prática:** GitOps combina declaração versionada, obtenção automática e reconciliação do estado.
 
-## E5.17 — Verificação | Configuração e acesso
+## E5.20 — Verificação | Configuração e acesso
 
 Depois da explicação • justifique cada resposta
 
@@ -264,7 +312,7 @@ Depois da explicação • justifique cada resposta
 
 **Conclusão prática:** O próximo slide traz as três respostas explicadas.
 
-## E5.18 — Respostas comentadas | Configuração e acesso
+## E5.21 — Respostas comentadas | Configuração e acesso
 
 Gabarito • explique a causa e a consequência
 
@@ -285,7 +333,7 @@ Resposta: Não. O ciclo GitOps também envolve obtenção automática e reconcil
 
 **Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
 
-## E5.19 — Estratégias de deploy: comparar os mecanismos
+## E5.22 — Estratégias de deploy: comparar os mecanismos
 
 A escolha depende de capacidade, tráfego e compatibilidade
 
@@ -300,7 +348,7 @@ A escolha depende de capacidade, tráfego e compatibilidade
 
 **Conclusão prática:** Estratégia de troca não substitui teste funcional, compatibilidade de dados ou recuperação.
 
-## E5.20 — Rolling: substituir aos poucos
+## E5.23 — Rolling: substituir aos poucos
 
 Diagrama conceitual • não é uma configuração implementada pelo laboratório
 
@@ -308,7 +356,7 @@ Diagrama conceitual • não é uma configuração implementada pelo laboratóri
 
 **Conclusão prática:** Versões convivem; contratos e banco devem continuar compatíveis durante a transição.
 
-## E5.21 — Blue-green: trocar o conjunto que recebe tráfego
+## E5.24 — Blue-green: trocar o conjunto que recebe tráfego
 
 Diagrama conceitual • não é uma configuração implementada pelo laboratório
 
@@ -316,7 +364,7 @@ Diagrama conceitual • não é uma configuração implementada pelo laboratóri
 
 **Conclusão prática:** Voltar o tráfego pode ser rápido; recuperar dados e efeitos externos é outro problema.
 
-## E5.22 — Canary: expor uma parcela e observar
+## E5.25 — Canary: expor uma parcela e observar
 
 Diagrama conceitual • não é uma configuração implementada pelo laboratório
 
@@ -324,7 +372,7 @@ Diagrama conceitual • não é uma configuração implementada pelo laboratóri
 
 **Conclusão prática:** Defina parcela, janela, sinais e ação antes de começar a expansão.
 
-## E5.23 — Feature flag: separar instalação de liberação
+## E5.26 — Feature flag: separar instalação de liberação
 
 Chave que habilita ou desabilita um comportamento • FEATURE_BANNER
 
@@ -338,7 +386,7 @@ Chave que habilita ou desabilita um comportamento • FEATURE_BANNER
 
 **Conclusão prática:** Flag desligada é contenção quando o defeito está no caminho controlado por ela.
 
-## E5.24 — Rollback, contenção e roll forward
+## E5.27 — Rollback, contenção e roll forward
 
 Recuperar exige escolher a ação adequada à falha
 
@@ -352,7 +400,7 @@ Recuperar exige escolher a ação adequada à falha
 
 **Conclusão prática:** Escolha pela causa e pelo estado atual; reiniciar tudo não é um plano de recuperação.
 
-## E5.25 — Banco de dados: por que voltar a imagem pode falhar
+## E5.28 — Banco de dados: por que voltar a imagem pode falhar
 
 Exemplo: renomear um campo que a versão antiga ainda lê
 
@@ -366,7 +414,7 @@ Exemplo: renomear um campo que a versão antiga ainda lê
 
 **Conclusão prática:** Compatibilidade de schema e efeitos externos devem aparecer no plano antes da promoção.
 
-## E5.26 — Release notes preenchidas: explicar a mudança
+## E5.29 — Release notes preenchidas: explicar a mudança
 
 Modelo didático da versão 2.0.0 da API
 
@@ -382,7 +430,7 @@ Modelo didático da versão 2.0.0 da API
 
 **Conclusão prática:** Quem não participou da mudança deve conseguir entender o que mudou e como verificar.
 
-## E5.27 — Runbook: instrução que outra pessoa consegue seguir
+## E5.30 — Runbook: instrução que outra pessoa consegue seguir
 
 Plano de recuperação com gatilho, ação e confirmação
 
@@ -398,9 +446,134 @@ Plano de recuperação com gatilho, ação e confirmação
 
 **Conclusão prática:** Não considere a recuperação concluída antes de repetir o teste que revelou a falha.
 
-## E5.28 — Demonstração: três imagens, um estado persistente
+## E5.31 — Da CI ao deploy: o que o workflow precisa conectar
 
-Continuação didática da API de visitas do E4
+Modelo fornecido: laboratório persistente; não é uma conta de produção
+
+**Job ci:** Construir e testar Exportar imagem
+
+**Transferência:** Artefato da execução Mesmo conteúdo
+
+**Job deploy:** Aguardar regra Aplicar no destino
+
+**Após o deploy:** Smoke funcional Recuperar se falhar
+
+**Como explicar:** O modelo completo está em workflow-cd-exemplo.yml na pasta do laboratório, fora de .github/workflows. A CI usa um runner temporário; o deploy exige um runner Linux dedicado, persistente e previamente preparado. A imagem é transportada em arquivo tar e seu ID local é conferido; numa arquitetura de registry, usar a referência por digest apropriada. O exemplo usa a release didática v2; no projeto real, adaptar build, testes e identidade ao artefato da aplicação.
+
+**Conclusão prática:** O modelo conecta dois momentos: validar a candidata e mudar um destino que continua existindo.
+
+## E5.32 — Workflow 1/2: a CI produz a candidata validada
+
+Trecho do arquivo completo • CI verde habilita a próxima etapa
+
+**Construir e testar:** Job ci roda em ubuntu-latest. Build de v2 + smoke integrado. Falha bloqueia a entrega.
+
+**Transportar:** docker save exporta a imagem. Artifact guarda tar + ID. Deploy recebe essa candidata.
+
+```
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    # build + teste + exportação (arquivo completo)
+  deploy:
+    needs: ci
+    runs-on: [self-hosted, linux, x64, e5-laboratorio]
+    environment: e5-laboratorio
+    # baixar a imagem validada e aplicar no destino
+```
+
+**Como explicar:** Leia o trecho como dependência, não como uma nova aula de GitHub Actions. O arquivo completo inclui checkout, instalação implícita de dependências no Dockerfile, teste em Compose, exportação e upload. O upload ocorre somente se os passos anteriores passaram. O runner temporário não é produção: seu Compose valida a imagem e é encerrado. O arquivo tar serve a um laboratório pequeno; para distribuição regular, registry e políticas de retenção são mais adequados.
+
+**Conclusão prática:** Se a candidata falhar na CI, o job de deploy não deve executar.
+
+## E5.33 — Workflow 2/2: aplicar e verificar o artefato
+
+Trecho do job deploy • imagem baixada do artifact e carregada no Engine
+
+**Destino:** Runner dedicado e persistente. Projeto e5-cd-local; porta 18087. Sem rebuild na promoção.
+
+**Pós-deploy:** Conferir imagem, versão e mensagem. Falhou? Restaurar referência anterior. O job permanece com falha.
+
+```
+docker load --input "$ARTIFACT_DIR/candidata.tar"
+image_id="$(cat "$ARTIFACT_DIR/imagem.id")"
+python3 Práticas/encontro-5-entrega/promover.py \
+  --imagem "$image_id" --versao 2.0.0 \
+  --mensagem "Bem-vindos à nova experiência!" \
+  --projeto e5-cd-local --porta 18087
+```
+
+**Como explicar:** No arquivo completo, docker load carrega candidata.tar e image_id vem de imagem.id. O helper promover.py resolve a imagem local, captura a referência anterior saudável, aplica a candidata e executa verificar.py. Se a candidata falha, tenta recuperar imagem e flag anteriores e testa novamente, mas retorna erro para preservar a evidência da entrega malsucedida. Na primeira implantação não há versão anterior: o script registra essa limitação. Este rollback é específico da demo sem migração de schema.
+
+**Conclusão prática:** Deploy não termina no comando de subida: exige conferir a versão e a operação no destino.
+
+## E5.34 — O que muda entre aprovação e promoção automática?
+
+Política do ambiente + destino efetivo • não basta trocar o nome do workflow
+
+| Decisão | Entrega com aprovação | Implantação contínua |
+| --- | --- | --- |
+| Após validar | Aguarda decisão de promover. | Política libera automaticamente. |
+| No GitHub | Environment com revisor obrigatório. | Sem aceite manual por versão. |
+| Controles | Testes, acesso e smoke permanecem. | Testes, acesso e smoke permanecem. |
+| Para afirmar produção | Demonstrar deploy no destino real. | Demonstrar promoção automática real. |
+
+**Como explicar:** O modelo de laboratório pressupõe configurar o environment e5-laboratorio com revisor obrigatório, se disponível no plano e na visibilidade do repositório. Escrever environment no YAML não cria essa exigência. Remover a revisão torna automática a entrega naquele laboratório; só se chama implantação contínua em produção quando esse é o destino real e os controles estão completos. Neste material nenhum workflow é ativado e nenhum ambiente remoto é provisionado.
+
+**Conclusão prática:** Aprovação manual por versão distingue os fluxos; nomear um ambiente production não cria produção.
+
+## E5.35 — Runner é o executor; ambiente é o destino
+
+Evitar uma demonstração de CI apresentada como implantação em produção
+
+**Runner temporário:** Hospedado para executar o job. Compose ali pode ser teste integrado. Não oferece serviço persistente ao usuário.
+
+**Destino persistente:** Host ou plataforma identificados. Acesso, rede e dados definidos. Aplicação permanece após o job.
+
+**Modelo da aula:** Runner dedicado ao laboratório. Mesma máquina hospeda o destino local. Sem credenciais de produção.
+
+**Como explicar:** O runner de deploy precisa ter o label e5-laboratorio, Docker/Compose, Python e espaço para o artefato. Use uma máquina isolada, confiável e sem outros serviços críticos; não conecte runner privilegiado a código não confiável ou PRs de forks. A porta 18087 fica apenas no loopback do host dedicado, não no notebook de quem abre o GitHub. A configuração de um runner persistente é um pré-requisito explicado, não uma tarefa obrigatória da turma. O helper também pode ser ensaiado localmente sem GitHub.
+
+**Conclusão prática:** Sempre diga onde os comandos executam, onde a aplicação fica e de onde o teste a acessa.
+
+## E5.36 — Verificação | Distinguir CI, entrega e implantação
+
+Depois da explicação • justifique cada resposta
+
+**1. Situação:** O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?
+
+**2. Situação:** A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?
+
+**3. Situação:** O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?
+
+**Como explicar:** Peça uma previsão curta com base no exemplo anterior. Revele o gabarito depois de ouvir duas ou três justificativas. Uma resposta deve indicar o mecanismo e a evidência, não apenas repetir o nome da ferramenta. Retome o diagrama do bloco se houver confusão entre o objeto e a operação.
+
+**Conclusão prática:** O próximo slide traz as três respostas explicadas.
+
+## E5.37 — Respostas comentadas | Distinguir CI, entrega e implantação
+
+Gabarito • explique a causa e a consequência
+
+**1. Resposta:** Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.
+
+**2. Resposta:** Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.
+
+**3. Resposta:** Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta.
+
+**Como explicar:** Pergunta: O job sobe Compose, testa e encerra tudo no runner temporário. Isso prova CD em produção?
+Resposta: Não. Prova validação automatizada no ambiente de teste. Falta demonstrar a promoção para um destino persistente.
+
+Pergunta: A pessoa aprova e um job implanta a versão validada. É implantação contínua sem intervenção?
+Resposta: Não. É o exemplo de entrega contínua com aprovação. O deploy pode ser automatizado mesmo com decisão humana.
+
+Pergunta: O smoke falha após o deploy e o rollback funciona. A entrega da candidata deve ficar verde?
+Resposta: Não. Registre a candidata como falha e a recuperação como resultado separado. Recuperar não torna a candidata correta.
+
+**Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
+
+## E5.38 — Ensaio local: deploy, contenção e recuperação
+
+Comandos manuais para entender as ações • não é implantação contínua
 
 **v1:** Mensagem antiga Referência funcional
 
@@ -408,11 +581,11 @@ Continuação didática da API de visitas do E4
 
 **v2:** Mensagem corrigida Mesmo schema
 
-**Como explicar:** Os três artefatos usam o mesmo código de servidor e metadados de release diferentes para tornar o defeito reproduzível e isolado. A falha é intencional no conteúdo da mensagem, não uma vulnerabilidade real. O banco mantém o contador em um volume do projeto E5, separado de E4. O objetivo é observar que sucesso do processo e do healthcheck não implica correção da funcionalidade. Este ensaio local não implementa canary, blue-green ou um deploy em nuvem.
+**Como explicar:** Os três artefatos usam o mesmo código de servidor e metadados de release diferentes para tornar o defeito reproduzível e isolado. A falha é intencional no conteúdo da mensagem, não uma vulnerabilidade real. O banco mantém o contador em um volume do projeto E5, separado de E4. O objetivo é observar que sucesso do processo e do healthcheck não implica correção da funcionalidade. Este ensaio local não implementa canary, blue-green ou um deploy em nuvem. Esta sequência manual ensina as ações depois automatizadas pelo helper; não deve ser chamada de implantação contínua. O modelo de workflow mostra onde conectar CI, aprovação e deploy.
 
 **Conclusão prática:** Mude apenas app; observe versão, comportamento e dados antes e depois.
 
-## E5.29 — Preparar as versões antes da demonstração
+## E5.39 — Preparar as versões antes da demonstração
 
 Terminal na pasta Práticas/encontro-5-entrega • Bash/zsh
 
@@ -433,7 +606,7 @@ docker build --build-arg RELEASE=v2 \
 
 **Conclusão prática:** Construção prepara o artefato; promoção seleciona qual artefato executar.
 
-## E5.30 — 1. Subir a referência e guardar evidência
+## E5.40 — 1. Subir a referência e guardar evidência
 
 O banco inicia com dados fictícios próprios do E5
 
@@ -454,7 +627,7 @@ curl -fsS localhost:18085/visitas
 
 **Conclusão prática:** A referência só serve para recuperação se sua execução foi comprovada.
 
-## E5.31 — 2. Promover a versão defeituosa no laboratório
+## E5.41 — 2. Promover a versão defeituosa no laboratório
 
 Erro proposital: a nova mensagem viola o resultado esperado
 
@@ -474,7 +647,7 @@ python3 verificar.py http://localhost:18085 \
 
 **Conclusão prática:** Uma falha observada no comportamento exige uma decisão, mesmo com o container healthy.
 
-## E5.32 — 3. Conter pela flag sem trocar a imagem
+## E5.42 — 3. Conter pela flag sem trocar a imagem
 
 O caminho antigo continua disponível neste exemplo
 
@@ -494,7 +667,7 @@ curl -fsS localhost:18085/version
 
 **Conclusão prática:** Contenção reduz impacto; a correção definitiva continua sendo necessária.
 
-## E5.33 — 4. Recuperar a versão conhecida e conferir os dados
+## E5.43 — 4. Recuperar a versão conhecida e conferir os dados
 
 Rollback de app • sem reconstruir imagem nem remover volume
 
@@ -514,7 +687,7 @@ curl -fsS localhost:18085/visitas
 
 **Conclusão prática:** Voltar a imagem é uma ação; provar a recuperação é a etapa seguinte.
 
-## E5.34 — 5. Entregar a correção e registrar o resultado
+## E5.44 — 5. Entregar a correção e registrar o resultado
 
 Roll forward: nova versão validada
 
@@ -534,7 +707,7 @@ python3 verificar.py http://localhost:18085 \
 
 **Conclusão prática:** O registro da release inclui o que mudou, o que falhou, a decisão e o teste da recuperação.
 
-## E5.35 — Ler a evidência: o mesmo status pode esconder um defeito
+## E5.45 — Ler a evidência: o mesmo status pode esconder um defeito
 
 Resultados esperados do ensaio • substituir pelos resultados observados
 
@@ -550,7 +723,7 @@ Resultados esperados do ensaio • substituir pelos resultados observados
 
 **Conclusão prática:** A evidência funcional precisa verificar o conteúdo ou efeito esperado, além do código HTTP.
 
-## E5.36 — Verificação | Recuperação e dados
+## E5.46 — Verificação | Recuperação e dados
 
 Depois da explicação • justifique cada resposta
 
@@ -564,7 +737,7 @@ Depois da explicação • justifique cada resposta
 
 **Conclusão prática:** O próximo slide traz as três respostas explicadas.
 
-## E5.37 — Respostas comentadas | Recuperação e dados
+## E5.47 — Respostas comentadas | Recuperação e dados
 
 Gabarito • explique a causa e a consequência
 
@@ -585,7 +758,7 @@ Resposta: Não. A versão antiga pode ser incompatível com o schema atual. Plan
 
 **Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
 
-## E5.38 — DevSecOps: segurança durante todo o fluxo
+## E5.48 — DevSecOps: segurança durante todo o fluxo
 
 Cada etapa produz uma evidência diferente
 
@@ -601,7 +774,7 @@ Cada etapa produz uma evidência diferente
 
 **Conclusão prática:** Cada controle deve responder a um risco concreto e indicar uma ação quando encontra problema.
 
-## E5.39 — O que cada análise procura — e o que deixa de fora
+## E5.49 — O que cada análise procura — e o que deixa de fora
 
 Ferramentas complementares, com limites explícitos
 
@@ -617,7 +790,7 @@ Ferramentas complementares, com limites explícitos
 
 **Conclusão prática:** Scan sem achados não substitui teste de autorização, revisão de configuração ou proteção de credenciais.
 
-## E5.40 — Interpretar um achado antes de decidir
+## E5.50 — Interpretar um achado antes de decidir
 
 Cenário fictício de dependência vulnerável; não corresponde a um CVE real
 
@@ -633,7 +806,7 @@ Cenário fictício de dependência vulnerável; não corresponde a um CVE real
 
 **Conclusão prática:** O relatório encontra indícios; a decisão explica exposição, impacto, tratamento e evidência.
 
-## E5.41 — Corrigir com IA: proposta, revisão e nova evidência
+## E5.51 — Corrigir com IA: proposta, revisão e nova evidência
 
 Exemplo: sugestão de atualização de dependência
 
@@ -647,7 +820,7 @@ Exemplo: sugestão de atualização de dependência
 
 **Conclusão prática:** Correção sugerida não é correção comprovada; confirme o efeito e possíveis regressões.
 
-## E5.42 — Pipeline também é um sistema com permissões
+## E5.52 — Pipeline também é um sistema com permissões
 
 O job pode ler código, acessar credenciais e alterar destinos
 
@@ -661,7 +834,7 @@ O job pode ler código, acessar credenciais e alterar destinos
 
 **Conclusão prática:** A automação deve ter o poder necessário para sua tarefa, com destino e evidências identificados.
 
-## E5.43 — Governança de IA: decisões, limites e responsabilidade
+## E5.53 — Governança de IA: decisões, limites e responsabilidade
 
 Regras concretas para o trabalho da equipe
 
@@ -675,7 +848,7 @@ Regras concretas para o trabalho da equipe
 
 **Conclusão prática:** Toda saída de IA é hipótese até ser validada por teste, execução ou revisão humana.
 
-## E5.44 — Prompt injection: dado externo tentando virar ordem
+## E5.54 — Prompt injection: dado externo tentando virar ordem
 
 Exemplo fictício dentro de um log enviado para análise
 
@@ -691,7 +864,7 @@ Exemplo fictício dentro de um log enviado para análise
 
 **Conclusão prática:** Conteúdo encontrado durante a tarefa não recebe autoridade para ampliar acessos ou mudar o objetivo.
 
-## E5.45 — Agentes: autonomia depende das permissões concedidas
+## E5.55 — Agentes: autonomia depende das permissões concedidas
 
 Não há uma regra universal de que todo agente para antes do merge
 
@@ -705,7 +878,7 @@ Não há uma regra universal de que todo agente para antes do merge
 
 **Conclusão prática:** O limite real está nas permissões e controles da integração, não na confiança na resposta.
 
-## E5.46 — Exemplo preenchido: uso responsável de IA
+## E5.56 — Exemplo preenchido: uso responsável de IA
 
 Registro de decisão, sem armazenar dados sensíveis
 
@@ -721,7 +894,7 @@ Registro de decisão, sem armazenar dados sensíveis
 
 **Conclusão prática:** O registro distingue sugestão, decisão e resultado observado.
 
-## E5.47 — Verificação | Segurança e governança
+## E5.57 — Verificação | Segurança e governança
 
 Depois da explicação • justifique cada resposta
 
@@ -735,7 +908,7 @@ Depois da explicação • justifique cada resposta
 
 **Conclusão prática:** O próximo slide traz as três respostas explicadas.
 
-## E5.48 — Respostas comentadas | Segurança e governança
+## E5.58 — Respostas comentadas | Segurança e governança
 
 Gabarito • explique a causa e a consequência
 
@@ -756,7 +929,7 @@ Resposta: Não. Remover a evidência pode esconder o defeito. Revise o diff e co
 
 **Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
 
-## E5.49 — Aplicar o E5 ao mesmo projeto integrador
+## E5.59 — Aplicar o E5 ao mesmo projeto integrador
 
 A entrega continua a ser da equipe
 
@@ -766,11 +939,11 @@ A entrega continua a ser da equipe
 
 **E6:** Observar e diagnosticar Demonstrar evidências
 
-**Como explicar:** A API do professor não deve substituir a aplicação escolhida. Peça que cada equipe identifique uma mudança pequena, um artefato ou versão e um destino de ensaio. O requisito do encontro é um plano de release acionável, rollback e checklist, com evidências disponíveis no repositório. Uma execução local é suficiente para demonstrar o mecanismo sem criar obrigação de nuvem. Entrega e operação continuam correspondendo a 15% da rubrica homologada; não altere os demais pesos.
+**Como explicar:** A API do professor não deve substituir a aplicação escolhida. Peça que cada equipe identifique uma mudança pequena, um artefato ou versão e um destino de ensaio. O requisito do encontro é um plano de release acionável, rollback e checklist, com evidências disponíveis no repositório. Uma execução local é suficiente para demonstrar o mecanismo sem criar obrigação de nuvem. Entrega e operação continuam correspondendo a 15% da rubrica homologada; não altere os demais pesos. A equipe identifica o limite atual de sua automação, sem chamar CI de implantação contínua.
 
 **Conclusão prática:** E5 alimenta os 15% de Entrega e Operação; os outros critérios e a avaliação de grupo permanecem.
 
-## E5.50 — Laboratório das equipes: plano e ensaio de entrega
+## E5.60 — Laboratório das equipes: plano e ensaio de entrega
 
 70 minutos • usar os arquivos e contratos do próprio projeto
 
@@ -780,18 +953,18 @@ A entrega continua a ser da equipe
 
 **45–70 min | Registrar:** Conferir rollback e dados. Revisar segurança e IA. Guardar resultados e pendências no repositório.
 
-**Como explicar:** Oriente o trabalho pelo projeto real. Se o grupo ainda não consegue executar uma troca, priorize um plano preciso, indique a limitação e registre o que foi apenas planejado. Não declare rollback testado sem ensaio. Enquanto uma pessoa opera, outras revisam critério, diff e registro; alternem funções sem formalizar notas individuais. Os templates trazem exemplo preenchido para evitar campos vagos. A aplicação pode ser outra linguagem: imagem e script de validação devem ser adaptados à stack.
+**Como explicar:** Oriente o trabalho pelo projeto real. Se o grupo ainda não consegue executar uma troca, priorize um plano preciso, indique a limitação e registre o que foi apenas planejado. Não declare rollback testado sem ensaio. Enquanto uma pessoa opera, outras revisam critério, diff e registro; alternem funções sem formalizar notas individuais. Os templates trazem exemplo preenchido para evitar campos vagos. A aplicação pode ser outra linguagem: imagem e script de validação devem ser adaptados à stack. O plano deve classificar explicitamente CI, entrega com aprovação ou implantação automática; identificar gatilho, artefato, executor, destino e teste após o deploy. O helper é opção de ensaio local, não nova obrigação de configurar um runner remoto.
 
 **Conclusão prática:** Planejado, executado e validado precisam ficar claramente distintos nas evidências.
 
-## E5.51 — Critérios de aceite do encontro 5
+## E5.61 — Critérios de aceite do encontro 5
 
 Toda evidência fica no repositório da equipe
 
 | Entregável | Conteúdo mínimo verificável |
 | --- | --- |
 | Release notes | Objetivo, escopo, versão/artefato, configuração, riscos e evidências. |
-| Plano de promoção | Destino, pré-requisitos, comandos e critérios de passagem. |
+| Plano de promoção | Destino, gatilho, artefato, aprovação/política, comandos e teste pós-deploy. |
 | Plano de recuperação | Gatilho, responsável, passos, dados afetados e validação final. |
 | Checklist de segurança | Segredos, permissões, dependências e exceções justificadas. |
 | Registro de IA | Finalidade, decisão e validação quando houver uso. |
@@ -800,7 +973,7 @@ Toda evidência fica no repositório da equipe
 
 **Conclusão prática:** Um link ou print isolado não substitui a explicação de qual critério foi comprovado.
 
-## E5.52 — Verificação | Decidir a entrega do projeto
+## E5.62 — Verificação | Decidir a entrega do projeto
 
 Depois da explicação • justifique cada resposta
 
@@ -814,7 +987,7 @@ Depois da explicação • justifique cada resposta
 
 **Conclusão prática:** O próximo slide traz as três respostas explicadas.
 
-## E5.53 — Respostas comentadas | Decidir a entrega do projeto
+## E5.63 — Respostas comentadas | Decidir a entrega do projeto
 
 Gabarito • explique a causa e a consequência
 
@@ -835,7 +1008,7 @@ Resposta: Não. Defina gatilho observável, responsável, referência anterior, 
 
 **Conclusão prática:** Use a justificativa para decidir o próximo teste ou controle.
 
-## E5.54 — Do release controlado à observabilidade
+## E5.64 — Do release controlado à observabilidade
 
 O que levar ao encontro 6
 
@@ -849,7 +1022,7 @@ O que levar ao encontro 6
 
 **Conclusão prática:** Entregar termina com verificação e acompanhamento, não com a última linha do script.
 
-## E5.55 — Referências e material para estudar depois
+## E5.65 — Referências e material para estudar depois
 
 Documentação oficial, notas e exemplos completos
 
@@ -863,7 +1036,7 @@ Documentação oficial, notas e exemplos completos
 
 **Conclusão prática:** Fim da trilha principal; as consultas aprofundam escolhas sem ampliar a entrega obrigatória.
 
-## E5.56 — Consulta | Ambientes protegidos no GitHub Actions
+## E5.66 — Consulta | Ambientes protegidos no GitHub Actions
 
 Environment associa o job ao destino e às regras configuradas
 
@@ -877,7 +1050,7 @@ Environment associa o job ao destino e às regras configuradas
 
 **Conclusão prática:** Proteção precisa estar configurada e verificada; o nome do ambiente sozinho não cria um gate.
 
-## E5.57 — Consulta | Credenciais curtas e identidade federada
+## E5.67 — Consulta | Credenciais curtas e identidade federada
 
 OIDC pode reduzir a dependência de segredos estáticos
 
@@ -891,7 +1064,7 @@ OIDC pode reduzir a dependência de segredos estáticos
 
 **Conclusão prática:** Eliminar uma senha estática não elimina a necessidade de revisar a confiança e as permissões.
 
-## E5.58 — Consulta | SBOM, proveniência e assinatura
+## E5.68 — Consulta | SBOM, proveniência e assinatura
 
 Três evidências com perguntas diferentes
 
@@ -905,7 +1078,7 @@ Três evidências com perguntas diferentes
 
 **Conclusão prática:** Origem verificável e inventário de componentes complementam testes; não comprovam ausência de falhas.
 
-## E5.59 — Consulta | Política de canary com números ilustrativos
+## E5.69 — Consulta | Política de canary com números ilustrativos
 
 Exemplo didático; limiares precisam ser calibrados para a aplicação
 
@@ -921,7 +1094,7 @@ Exemplo didático; limiares precisam ser calibrados para a aplicação
 
 **Conclusão prática:** Uma política útil diz o que medir, quanto observar e qual ação executar para cada resultado.
 
-## E5.60 — Consulta | Ler um plano antes de aplicar
+## E5.70 — Consulta | Ler um plano antes de aplicar
 
 Exemplo conceitual de revisão de infraestrutura
 
@@ -937,6 +1110,9 @@ Exemplo conceitual de revisão de infraestrutura
 
 ## Referências
 
+- [CI, Continuous Delivery e Continuous Deployment](https://www.redhat.com/en/topics/devops/what-is-ci-cd)
+- [Controle de deploy no GitHub Actions](https://docs.github.com/en/actions/how-tos/deploy/configure-and-manage-deployments/control-deployments)
+- [Runners hospedados](https://docs.github.com/en/actions/concepts/runners/github-hosted-runners)
 - [Docker Compose em produção](https://docs.docker.com/compose/how-tos/production/)
 - [Docker Compose: serviços](https://docs.docker.com/reference/compose-file/services/)
 - [Ambientes de implantação no GitHub](https://docs.github.com/en/actions/concepts/workflows-and-actions/deployment-environments)

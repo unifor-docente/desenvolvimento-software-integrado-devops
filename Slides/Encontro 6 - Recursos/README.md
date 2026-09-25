@@ -11,6 +11,6 @@
 - [Laboratório e comandos](../../Práticas/encontro-6-observabilidade/README.md)
 - [Validação](VALIDACAO.md)
 
-Referências pelo rodapé E6·NN; no PDF independente a página é NN + 1, devido à capa. No conjunto principal, E6 ocupa as posições 247–306. Os anexos permanecem depois dele. O guia em PowerPoint inclui o percurso principal; as consultas estão na apresentação completa e no guia escrito.
+Referências pelo rodapé E6·NN; no PDF independente a página é NN + 1, devido à capa. No conjunto principal, E6 ocupa as posições 257–316. Os anexos permanecem depois dele. O guia em PowerPoint inclui o percurso principal; as consultas estão na apresentação completa e no guia escrito.
 
 Fontes editáveis: `conteudo_e6.py` e `gerar_encontro6.py`. O gerador altera somente a seção E6 das apresentações e da apostila. Após regenerar, exportar os PDFs, atualizar o sumário da apostila e conferir a diagramação. Diagramas são formas vetoriais editáveis. Tempos, limites e ferramentas devem ser adaptados ao ambiente e ao projeto da equipe.

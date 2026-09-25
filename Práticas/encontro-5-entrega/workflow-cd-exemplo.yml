@@ -1,0 +1,73 @@
+# MODELO DIDÁTICO — fora de .github/workflows para não ativar deploy por acidente.
+# Antes de copiar: preparar runner Linux persistente e exclusivo com label e5-laboratorio,
+# Docker/Compose e Python 3; configurar o environment e5-laboratorio com revisor obrigatório.
+# A entrega é para um LABORATÓRIO persistente, não para produção.
+name: E5 - CI e entrega ao laboratorio
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+concurrency:
+  group: e5-laboratorio
+  cancel-in-progress: false
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: Práticas/encontro-5-entrega
+    env:
+      APP_IMAGE: e5-candidata:${{ github.sha }}
+      FEATURE_BANNER: 'true'
+      PORTA_HOST: '18085'
+      COMPOSE_PROJECT_NAME: e5-ci
+    steps:
+      - uses: actions/checkout@v4
+      - name: Construir uma vez
+        run: docker build --build-arg RELEASE=v2 -t "$APP_IMAGE" .
+      - name: Validar candidata em ambiente temporario
+        run: |
+          docker compose up -d --no-build --wait
+          python3 verificar.py http://localhost:18085 2.0.0 "Bem-vindos à nova experiência!"
+      - name: Exportar a mesma imagem validada
+        run: |
+          docker save --output candidata.tar "$APP_IMAGE"
+          docker image inspect --format '{{.Id}}' "$APP_IMAGE" > imagem.id
+      - uses: actions/upload-artifact@v4
+        with:
+          name: candidata-e5
+          path: |
+            Práticas/encontro-5-entrega/candidata.tar
+            Práticas/encontro-5-entrega/imagem.id
+          retention-days: 1
+          if-no-files-found: error
+      - name: Encerrar somente o projeto de teste
+        if: always()
+        run: docker compose down
+  deploy:
+    needs: ci
+    runs-on: [self-hosted, linux, x64, e5-laboratorio]
+    # A aprovação vem da regra configurada no GitHub, não do nome abaixo.
+    environment: e5-laboratorio
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/download-artifact@v4
+        with:
+          name: candidata-e5
+          path: ${{ runner.temp }}/e5-${{ github.run_id }}-${{ github.run_attempt }}
+      - name: Implantar, testar e recuperar se necessario
+        shell: bash
+        env:
+          ARTIFACT_DIR: ${{ runner.temp }}/e5-${{ github.run_id }}-${{ github.run_attempt }}
+        run: |
+          set -euo pipefail
+          docker load --input "$ARTIFACT_DIR/candidata.tar"
+          image_id="$(cat "$ARTIFACT_DIR/imagem.id")"
+          docker image inspect "$image_id" > /dev/null
+          python3 Práticas/encontro-5-entrega/promover.py \
+            --imagem "$image_id" --versao 2.0.0 \
+            --mensagem "Bem-vindos à nova experiência!" \
+            --projeto e5-cd-local --porta 18087
+      # Sem down: o destino persiste após o job.

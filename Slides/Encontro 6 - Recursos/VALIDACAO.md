@@ -6,7 +6,7 @@
 - Cinco verificações, 15 questões e 15 respostas explicadas; gabaritos imediatamente após as questões.
 - 11 diagramas/esquemas editáveis; quatro slides opcionais de consulta.
 - Notas do apresentador e referências oficiais em todos os slides de conteúdo.
-- Conteúdo do E6 incorporado ao conjunto principal (247–306) e ao guia em PowerPoint.
+- Conteúdo do E6 incorporado ao conjunto principal (257–316) e ao guia em PowerPoint.
 - Comparação automatizada confirmou textos dos demais encontros e anexos preservados nas apresentações; outros capítulos preservados no DOCX.
 - Inspeção visual das 60 páginas, incluindo capa, tabelas, código, figuras e gabaritos; sem cortes identificados.
 - Verificação de texto nas 751 caixas do PDF: duas divergências de ordem de extração do sinal de menos, conferidas visualmente nas páginas 11 e 19; não são perdas de conteúdo.

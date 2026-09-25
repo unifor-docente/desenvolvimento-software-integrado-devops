@@ -1,4 +1,6 @@
-# Encontro 5 — release, contenção e rollback
+# Encontro 5 — ensaio local de deploy, contenção e rollback
+
+Esta sequência é manual e não demonstra, sozinha, Continuous Deployment. Para distinguir CI, entrega com aprovação e implantação automática, leia [Automação de entrega](AUTOMACAO-CD.md), com helper local e workflow comentado para laboratório persistente.
 
 Demonstração local para 25/09/2026. Evolui a API de visitas do encontro 4 em uma pasta e um projeto Compose separados. **As equipes mantêm seu próprio projeto integrador**; este exemplo explica as decisões de entrega.
 
